@@ -21,6 +21,10 @@ def get_goal(size):
 		(7,6,5)
 	)
 
+def print_grid(grid):
+	for line in grid:
+		print(line)
+
 def get_empty_coords(grid, size):
 	for y in range(size):
 		for x in range(size):
@@ -46,20 +50,82 @@ def get_neighbors(grid, size):
 	l = get_swap(grid, x, y, x + 1, y, size)
 	return [e for e in [u,r,d,l] if e]
 
+# dict of tuples representing (x, y) of each goal grid value
+def get_goal_dict(goal, size):
+	goal_dict = {}
+	for y in range(size):
+		for x in range(size):
+			goal_dict[str(goal[y][x])] = (x, y)
+	return goal_dict
+
+def get_manhattan(grid, goal_dict, size): # TODO: Haven't tested
+	diff = 0
+	for y in range(size):
+		for x in range(size):
+			grid_val = grid[y][x]
+			goal_pos_x, goal_pos_y = goal_dict[str(grid_val)]
+			distance_x = abs(x - goal_pos_x)
+			distance_y = abs(y - goal_pos_y)
+			diff += distance_x + distance_y
+	return diff
+
+def get_is_goal(grid, goal, size):
+	for y in range(size):
+		for x in range(size):
+			if grid[x][y] != goal[x][y]:
+				return False
+	return True
+
+def flatten(grid):
+	grid_key = ''
+	for line in grid:
+		grid_key += ''.join(str(x) for x in line)
+	return grid_key
+
 if __name__ == '__main__':
 	a, size = parse()
-	# print(a)
 	opens = [a]
 	closed = []
-	g_scores = []
-	f_scores = []
-	parents = []
+	g_scores = {}
+	f_scores = {}
+	parents = {}
 	goal = get_goal(size)
-	# print(goal)
+	a_key = flatten(a)
 
-	while opens:
-		current = opens.pop(0)
+	if get_is_goal(a, goal, size):
+		print("Original grid matched goal!")
+		sys.exit(0)
+
+	goal_dict = get_goal_dict(goal, size)
+
+	g_scores[a_key] = 0
+	parents[a_key] = None
+	f_scores[a_key] = get_manhattan(a, goal_dict, size) # g (is 0) + h
+
+	i = 1
+	while opens and i < 100000:
+		current = opens.pop(0) # TODO: use queue instead of list? (so we don't have to shift entire array)
 		closed.append(current)
 		neighbors = get_neighbors(current, size)
+
+		min_neighbor = neighbors[0]
+
 		for n in neighbors:
-			print(n)
+			n_key = flatten(n)
+
+			if get_is_goal(n, goal, size):
+				print("Got to goal after " + str(i) + " searches.")
+				sys.exit(0)
+			if n in closed:
+				g_scores[n_key] = min([i, g_scores[n_key]])
+				# TODO: update f_score
+			else:
+				parents[n_key] = current
+				g_scores[n_key] = i
+				f_scores[n_key] = i + get_manhattan(n, goal_dict, size)
+			if f_scores[n_key] < f_scores[flatten(min_neighbor)]:
+				min_neighbor = n
+		opens.append(min_neighbor)
+
+		i += 1
+		
