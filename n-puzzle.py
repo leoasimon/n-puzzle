@@ -58,6 +58,10 @@ def get_goal_dict(goal, size):
 			goal_dict[str(goal[y][x])] = (x, y)
 	return goal_dict
 
+def get_h_score(grid, goal_dict, size):
+	# Todo: chose one heuristic
+	return get_manhattan(grid, goal_dict, size)
+
 def get_manhattan(grid, goal_dict, size): # TODO: Haven't tested
 	diff = 0
 	for y in range(size):
@@ -77,10 +81,18 @@ def get_is_goal(grid, goal, size):
 	return True
 
 def flatten(grid):
-	grid_key = ''
-	for line in grid:
-		grid_key += ''.join(str(x) for x in line)
-	return grid_key
+	return grid
+
+def print_scores(o, f_scores):
+	for e in o:
+		print("score: {}".format(f_scores[flatten(e)]))
+
+def get_path(curr, parents, moves):
+	if curr == None:
+		print("end!")
+		return
+	get_path(parents[curr], parents, moves + 1)
+	print("Move #{}: {}".format(moves, parents[curr]))
 
 if __name__ == '__main__':
 	a, size = parse()
@@ -103,29 +115,31 @@ if __name__ == '__main__':
 	f_scores[a_key] = get_manhattan(a, goal_dict, size) # g (is 0) + h
 
 	i = 1
-	while opens and i < 100000:
+	while opens and i < 5000:
+		opens.sort(key=lambda e: f_scores[flatten(e)])
+		# print("\nsorted " + str(i) + " : ")
+		# print_scores(opens, f_scores)
 		current = opens.pop(0) # TODO: use queue instead of list? (so we don't have to shift entire array)
 		closed.append(current)
 		neighbors = get_neighbors(current, size)
-
-		min_neighbor = neighbors[0]
 
 		for n in neighbors:
 			n_key = flatten(n)
 
 			if get_is_goal(n, goal, size):
+				parents[n_key] = current
 				print("Got to goal after " + str(i) + " searches.")
+				get_path(parents[n_key], parents, 0)
 				sys.exit(0)
 			if n in closed:
-				g_scores[n_key] = min([i, g_scores[n_key]])
-				# TODO: update f_score
-			else:
+				new_g = min([i, g_scores[n_key]])
+				if new_g < g_scores[n_key]:
+					diff = g_scores[n_key] - new_g
+					f_scores[n_key] -= diff 
+					g_scores[n_key] = new_g
+			elif n not in opens:
 				parents[n_key] = current
 				g_scores[n_key] = i
-				f_scores[n_key] = i + get_manhattan(n, goal_dict, size)
-			if f_scores[n_key] < f_scores[flatten(min_neighbor)]:
-				min_neighbor = n
-		opens.append(min_neighbor)
-
+				f_scores[n_key] = i + get_h_score(n, goal_dict, size)
+				opens.append(n)
 		i += 1
-		
