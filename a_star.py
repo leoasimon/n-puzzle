@@ -1,6 +1,11 @@
 from heuristics import get_h_score
 from printer import print_solution
 
+try:
+    import Queue as Q  # ver. < 3.0
+except ImportError:
+	import queue as Q
+
 def get_goal(size):
 	#Todo: do real thing
 	return (
@@ -49,13 +54,12 @@ def get_is_goal(grid, goal, size):
 				return False
 	return True
 
-def flatten(grid):
-	return grid
-
 def solve(a, size):
 	opens = [a]
-	print(size)
-	closed = []
+
+	opensq = Q.PriorityQueue()
+
+	print("Size: " + str(size))
 	g_scores = {}
 	f_scores = {}
 	parents = {}
@@ -69,28 +73,25 @@ def solve(a, size):
 
 	g_scores[a] = 0
 	parents[a] = None
-	f_scores[a] = get_h_score(a, goal_dict, size) # g (is 0) + h
+
+	f_scores[a] = get_h_score(a, goal_dict, size)
+
+	opensq.put((f_scores[a], a))
 
 	i = 1
-	while opens and i < 5000:
-		opens.sort(key=lambda e: f_scores[flatten(e)])
-		current = opens.pop(0) # TODO: use queue instead of list? (so we don't have to shift entire array)
-		closed.append(current)
+	while not opensq.empty():
+		current = opensq.get()[1]
 		neighbors = get_neighbors(current, size)
+		g = g_scores[current] + 1
 
 		for n in neighbors:
 			if get_is_goal(n, goal, size):
 				parents[n] = current
 				print_solution(n, parents, i)
-			if n in closed:
-				new_g = min([i, g_scores[n]])
-				if new_g < g_scores[n]:
-					diff = g_scores[n] - new_g
-					f_scores[n] -= diff 
-					g_scores[n] = new_g
-			elif n not in opens:
+
+			if n not in g_scores or g < g_scores[n]:
 				parents[n] = current
-				g_scores[n] = i
-				f_scores[n] = i + get_h_score(n, goal_dict, size)
-				opens.append(n)
+				g_scores[n] = g
+				f_scores[n] = get_h_score(n, goal_dict, size) + g
+				opensq.put((f_scores[n], n))
 		i += 1
