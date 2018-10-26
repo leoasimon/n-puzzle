@@ -72,25 +72,23 @@ def solve(a, size):
 	f_scores[a] = get_h_score(a, goal_dict, size) # g (is 0) + h
 
 	i = 1
-	while opens and i < 5000:
-		opens.sort(key=lambda e: f_scores[flatten(e)])
+	while opens:
+		opens.sort(key=lambda e: f_scores[e])
 		current = opens.pop(0) # TODO: use queue instead of list? (so we don't have to shift entire array)
+		if get_is_goal(current, goal, size):
+			print_solution(n, parents, i)
 		closed.append(current)
 		neighbors = get_neighbors(current, size)
 
 		for n in neighbors:
-			if get_is_goal(n, goal, size):
-				parents[n] = current
-				print_solution(n, parents, i)
 			if n in closed:
-				new_g = min([i, g_scores[n]])
-				if new_g < g_scores[n]:
-					diff = g_scores[n] - new_g
-					f_scores[n] -= diff 
-					g_scores[n] = new_g
-			elif n not in opens:
-				parents[n] = current
-				g_scores[n] = i
-				f_scores[n] = i + get_h_score(n, goal_dict, size)
+				continue
+			new_g = g_scores[current] + 1
+			if n not in opens:
 				opens.append(n)
+			elif n in g_scores and new_g >= g_scores[n]:
+				continue
+			parents[n] = current
+			g_scores[n] = new_g
+			f_scores[n] = new_g + get_h_score(n, goal_dict, size)
 		i += 1
