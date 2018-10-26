@@ -1,5 +1,5 @@
 from heuristics import get_h_score
-from printer import print_solution
+from printer import print_solution, get_path
 
 try:
     import Queue as Q  # ver. < 3.0
@@ -85,9 +85,9 @@ def solve(a, size):
 		g = g_scores[current] + 1
 
 		for n in neighbors:
-			if get_is_goal(n, goal, size):
+			if n == goal:
 				parents[n] = current
-				print_solution(n, parents, i)
+				return get_path(n, parents, 0)
 
 			if n not in g_scores or g < g_scores[n]:
 				parents[n] = current

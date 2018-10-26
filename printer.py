@@ -8,14 +8,17 @@ def print_scores(o, f_scores):
 	for e in o:
 		print("score: {}".format(f_scores[e]))
 
+#Todo: move it in a more relevant file
 def get_path(curr, parents, moves):
 	if curr == None:
-		print("end!")
-		return
-	get_path(parents[curr], parents, moves + 1)
-	print("Move #{}: {}".format(moves, parents[curr]))
+		return []
+	l = get_path(parents[curr], parents, moves + 1)
+	l.append(curr)
+	return l
 
 def print_solution(n, parents, i):
-    print("Got to goal after " + str(i) + " searches.")
-    get_path(parents[n], parents, 0)
-    sys.exit(0)
+	print("Got to goal after " + str(i) + " searches.")
+	l = get_path(n, parents, 0)
+	for e in l:
+		print(e)
+	sys.exit(0)

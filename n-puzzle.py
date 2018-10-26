@@ -10,4 +10,6 @@ from a_star import solve
 
 if __name__ == '__main__':
 	a, size = parse()
-	solve(a, size)
+	path = solve(a, size)
+	for n in path:
+		print(n)
