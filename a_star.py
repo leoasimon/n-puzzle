@@ -1,5 +1,5 @@
 from heuristics import get_h_score
-import sys
+from print import print_solution
 
 def get_goal(size):
 	#Todo: do real thing
@@ -8,10 +8,6 @@ def get_goal(size):
 		(8,0,4),
 		(7,6,5)
 	)
-
-def print_grid(grid):
-	for line in grid:
-		print(line)
 
 def get_empty_coords(grid, size):
 	for y in range(size):
@@ -56,17 +52,6 @@ def get_is_goal(grid, goal, size):
 def flatten(grid):
 	return grid
 
-def print_scores(o, f_scores):
-	for e in o:
-		print("score: {}".format(f_scores[e]))
-
-def get_path(curr, parents, moves):
-	if curr == None:
-		print("end!")
-		return
-	get_path(parents[curr], parents, moves + 1)
-	print("Move #{}: {}".format(moves, parents[curr]))
-
 def solve(a, size):
 	opens = [a]
 	print(size)
@@ -96,9 +81,7 @@ def solve(a, size):
 		for n in neighbors:
 			if get_is_goal(n, goal, size):
 				parents[n] = current
-				print("Got to goal after " + str(i) + " searches.")
-				get_path(parents[n], parents, 0)
-				sys.exit(0)
+				print_solution(n, parents, i)
 			if n in closed:
 				new_g = min([i, g_scores[n]])
 				if new_g < g_scores[n]:
