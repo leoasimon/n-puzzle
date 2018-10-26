@@ -3,6 +3,7 @@
 import sys
 import re
 from parser import parse
+from heuristics import get_h_score
 
 def get_goal(size):
 	return (
@@ -48,21 +49,6 @@ def get_goal_dict(goal, size):
 			goal_dict[str(goal[y][x])] = (x, y)
 	return goal_dict
 
-def get_h_score(grid, goal_dict, size):
-	# Todo: chose one heuristic
-	return get_manhattan(grid, goal_dict, size)
-
-def get_manhattan(grid, goal_dict, size): # TODO: Haven't tested
-	diff = 0
-	for y in range(size):
-		for x in range(size):
-			grid_val = grid[y][x]
-			goal_pos_x, goal_pos_y = goal_dict[str(grid_val)]
-			distance_x = abs(x - goal_pos_x)
-			distance_y = abs(y - goal_pos_y)
-			diff += distance_x + distance_y
-	return diff
-
 def get_is_goal(grid, goal, size):
 	for y in range(size):
 		for x in range(size):
@@ -101,7 +87,7 @@ if __name__ == '__main__':
 
 	g_scores[a] = 0
 	parents[a] = None
-	f_scores[a] = get_manhattan(a, goal_dict, size) # g (is 0) + h
+	f_scores[a] = get_h_score(a, goal_dict, size) # g (is 0) + h
 
 	i = 1
 	while opens and i < 5000:
