@@ -1,5 +1,5 @@
 from heuristics import get_h_score
-from print import print_solution
+from printer import print_solution
 
 def get_goal(size):
 	#Todo: do real thing
