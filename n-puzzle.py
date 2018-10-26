@@ -2,17 +2,7 @@
 
 import sys
 import re
-
-def get_int_lst(l):
-	return [int(e) for e in l]
-
-def parse():
-	lines = [l.split() for l in sys.stdin if l[0] != "#"]
-	size = int(lines.pop(0)[0])
-
-	print("size : {}".format(size))
-	lines = [get_int_lst(l) for l in lines]
-	return (tuple([tuple(l) for l in lines]), size)
+from parser import parse
 
 def get_goal(size):
 	return (
@@ -85,7 +75,7 @@ def flatten(grid):
 
 def print_scores(o, f_scores):
 	for e in o:
-		print("score: {}".format(f_scores[flatten(e)]))
+		print("score: {}".format(f_scores[e]))
 
 def get_path(curr, parents, moves):
 	if curr == None:
@@ -102,7 +92,6 @@ if __name__ == '__main__':
 	f_scores = {}
 	parents = {}
 	goal = get_goal(size)
-	a_key = flatten(a)
 
 	if get_is_goal(a, goal, size):
 		print("Original grid matched goal!")
@@ -110,36 +99,32 @@ if __name__ == '__main__':
 
 	goal_dict = get_goal_dict(goal, size)
 
-	g_scores[a_key] = 0
-	parents[a_key] = None
-	f_scores[a_key] = get_manhattan(a, goal_dict, size) # g (is 0) + h
+	g_scores[a] = 0
+	parents[a] = None
+	f_scores[a] = get_manhattan(a, goal_dict, size) # g (is 0) + h
 
 	i = 1
 	while opens and i < 5000:
 		opens.sort(key=lambda e: f_scores[flatten(e)])
-		# print("\nsorted " + str(i) + " : ")
-		# print_scores(opens, f_scores)
 		current = opens.pop(0) # TODO: use queue instead of list? (so we don't have to shift entire array)
 		closed.append(current)
 		neighbors = get_neighbors(current, size)
 
 		for n in neighbors:
-			n_key = flatten(n)
-
 			if get_is_goal(n, goal, size):
-				parents[n_key] = current
+				parents[n] = current
 				print("Got to goal after " + str(i) + " searches.")
-				get_path(parents[n_key], parents, 0)
+				get_path(parents[n], parents, 0)
 				sys.exit(0)
 			if n in closed:
-				new_g = min([i, g_scores[n_key]])
-				if new_g < g_scores[n_key]:
-					diff = g_scores[n_key] - new_g
-					f_scores[n_key] -= diff 
-					g_scores[n_key] = new_g
+				new_g = min([i, g_scores[n]])
+				if new_g < g_scores[n]:
+					diff = g_scores[n] - new_g
+					f_scores[n] -= diff 
+					g_scores[n] = new_g
 			elif n not in opens:
-				parents[n_key] = current
-				g_scores[n_key] = i
-				f_scores[n_key] = i + get_h_score(n, goal_dict, size)
+				parents[n] = current
+				g_scores[n] = i
+				f_scores[n] = i + get_h_score(n, goal_dict, size)
 				opens.append(n)
 		i += 1
