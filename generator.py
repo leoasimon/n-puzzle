@@ -49,11 +49,10 @@ def make_loop(grid, size):
             side_n = (side_n + 1) % len(sides)
             sx += 1
             sy -= j - 1
-    return
-
-def make_goal(size):
-    max_val = (size * size) - 1
-    grid = [[0 for i in range(size)] for x in range(size)]
-    make_loop(grid, size)
     return grid
 
+def make_goal(size):
+    grid = [[0 for i in range(size)] for x in range(size)]
+    grid = make_loop(grid, size)
+    grid = tuple(tuple(x) for x in grid)
+    return grid

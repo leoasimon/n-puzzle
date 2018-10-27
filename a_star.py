@@ -1,5 +1,6 @@
 from heuristics import get_h_score
 from printer import print_solution, get_path
+from generator import make_goal
 
 try:
     import Queue as Q  # ver. < 3.0
@@ -8,11 +9,7 @@ except ImportError:
 
 def get_goal(size):
 	#Todo: do real thing
-	return (
-		(1,2,3),
-		(8,0,4),
-		(7,6,5)
-	)
+	return make_goal(size)
 
 def get_empty_coords(grid, size):
 	for y in range(size):
