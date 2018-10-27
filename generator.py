@@ -5,12 +5,11 @@ from printer import print_grid
 import sys
 
 def make_loop(grid, size):
-    i = 1
-    j = size
-    max_val = (size * size) - 1
-    sx = 0
-    sy = 0
-    sv = 1
+    i = 1 # current value for grid
+    j = size # current length of side to fill
+    max_val = (size * size) - 1 # spiral should stop when i == this
+    sx = 0 # starting x position
+    sy = 0 # starting y position
 
     sides = ['top', 'right', 'bottom', 'left']
     side_n = 0
