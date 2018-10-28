@@ -52,20 +52,14 @@ def get_is_goal(grid, goal, size):
 	return True
 
 def solve(a, size):
-	opens = [a]
-
 	opensq = Q.PriorityQueue()
-
 	print("Size: " + str(size))
 	g_scores = {}
 	f_scores = {}
 	parents = {}
-	closed = {}
 	goal = get_goal(size)
 
-	if get_is_goal(a, goal, size):
-		print("Original grid matched goal!")
-		sys.exit(0)
+	
 
 	goal_dict = get_goal_dict(goal, size)
 
@@ -73,6 +67,9 @@ def solve(a, size):
 	parents[a] = None
 
 	f_scores[a] = get_h_score(a, goal, goal_dict, size)
+
+	if get_is_goal(a, goal, size):
+		return get_path(a, parents, 0)
 
 	opensq.put((f_scores[a], a))
 
@@ -85,15 +82,11 @@ def solve(a, size):
 		for n in neighbors:
 			if n == goal:
 				parents[n] = current
-				return get_path(n, parents, 0)
+				return print_solution(n, parents, 0)
 
 			if n not in g_scores or g < g_scores[n]:
-				if n in closed:
-					print(f'n in closed: {i}')
 				parents[n] = current
 				g_scores[n] = g
 				f_scores[n] = get_h_score(n, goal, goal_dict, size) + g
 				opensq.put((f_scores[n], n))
-
-		closed[current] = f_scores[n]
 		i += 1

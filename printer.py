@@ -17,8 +17,8 @@ def get_path(curr, parents, moves):
 	return l
 
 def print_solution(n, parents, i):
-	print("Got to goal after " + str(i) + " searches.")
 	l = get_path(n, parents, 0)
-	for e in l:
+	for j, e in enumerate(l):
+		print(f'move: {j}', end=' ')
 		print(e)
 	sys.exit(0)
