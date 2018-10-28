@@ -10,9 +10,12 @@ from a_star import solve
 from gui import display_all
 
 if __name__ == '__main__':
-	a, size = parse()
+	a, size, options = parse()
 	path = solve(a, size)
-	for n in path:
-		print(n)
-	# Todo: create -g option for gui mode
-	# display_all(size, path)
+	for j, e in enumerate(path):
+		print(f'move: {j}', end=' ')
+		print(e)
+	if "g" in options:
+		display_all(size, path)
+	sys.exit(0)
+	

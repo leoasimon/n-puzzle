@@ -18,7 +18,4 @@ def get_path(curr, parents, moves):
 
 def print_solution(n, parents, i):
 	l = get_path(n, parents, 0)
-	for j, e in enumerate(l):
-		print(f'move: {j}', end=' ')
-		print(e)
-	sys.exit(0)
+	return l
