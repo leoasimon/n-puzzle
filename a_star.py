@@ -3,7 +3,7 @@ from printer import print_solution, get_path
 from generator import make_goal
 
 try:
-    import Queue as Q  # ver. < 3.0
+	import Queue as Q  # ver. < 3.0
 except ImportError:
 	import queue as Q
 
@@ -53,22 +53,17 @@ def get_is_goal(grid, goal, size):
 
 def solve(a, size):
 	opensq = Q.PriorityQueue()
-	print("Size: " + str(size))
 	g_scores = {}
 	f_scores = {}
 	parents = {}
 	goal = get_goal(size)
-
-	
-
 	goal_dict = get_goal_dict(goal, size)
 
-	g_scores[a] = 0
 	parents[a] = None
-
+	g_scores[a] = 0
 	f_scores[a] = get_h_score(a, goal, goal_dict, size)
 
-	if get_is_goal(a, goal, size):
+	if a == goal:
 		return get_path(a, parents, 0)
 
 	opensq.put((f_scores[a], a))

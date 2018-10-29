@@ -1,7 +1,7 @@
-import numpy as nm
+import numpy as np
 import scipy.spatial.distance
 
-def get_manhattan(grid, goal, goal_dict, size): # TODO: Haven't tested
+def get_manhattan(grid, goal, goal_dict, size):
 	diff = 0
 	for y in range(size):
 		for x, val in enumerate(grid[y]):

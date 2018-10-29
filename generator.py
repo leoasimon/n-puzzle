@@ -4,7 +4,7 @@ from collections import deque
 from printer import print_grid 
 import sys
 
-def make_loop(grid, size):
+def make_loop(grid, size): # TODO: Refactor for legibility
     i = 1 # current value for grid
     j = size # current length of side to fill
     max_val = (size * size) - 1 # spiral should stop when i == this
