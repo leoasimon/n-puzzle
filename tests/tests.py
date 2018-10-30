@@ -1,11 +1,18 @@
+#! /usr/bin/env python3
+
 from io import StringIO
 from os import getcwd, listdir
-from os.path import join
+from os.path import join, dirname, realpath
 import sys
+import subprocess
 from unittest import TestCase
 from unittest.mock import patch
 sys.path.insert(0, join(getcwd(), "../"))
 from parser import parsefile
+
+dir_path = dirname(realpath(__file__))
+p_path = join(dir_path, "../n-puzzle.py")
+print(p_path)
 
 class bcolors:
     HEADER = '\033[95m'
@@ -33,6 +40,29 @@ class Parser(TestCase):
     def test(self):
         self.test_invalid()
 
+class Main(TestCase):
+    def test_main(self):
+        print(bcolors.HEADER + "-----VALIDS-----")
+        files = listdir(join(getcwd(), "puzzles/valids"))
+        for fname in files:
+            print(bcolors.OKBLUE + fname)
+            path = join(getcwd(), "puzzles/valids", fname)
+            out1 = subprocess.check_output([p_path, path])
+            print(out1.decode())
+    def test(self):
+        self.test_main()
+
+        
+
 if __name__ == "__main__":
-    parser = Parser()
-    parser.test()
+    allargs = ["parser", "main"]
+    args = [e for e in sys.argv if e in allargs]
+    args = allargs if len(args) == 0 else args
+
+    if "parser" in args:
+        parser = Parser()
+        parser.test()
+    
+    if "main" in args:
+        main = Main()
+        main.test()
