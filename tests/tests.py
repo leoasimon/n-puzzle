@@ -67,8 +67,6 @@ class Main(TestCase):
     def test(self):
         self.test_main()
 
-        
-
 if __name__ == "__main__":
     allargs = ["parser", "main", "large"]
     args = [e for e in sys.argv if e in allargs]

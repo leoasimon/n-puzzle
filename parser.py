@@ -12,7 +12,7 @@ def secured_open(filename):
 		f = open(filename, 'r')
 		return f
 	except:
-		return handle_error_none("No file {}".fornat(filename))
+		return handle_error_none(f'No file {filename}')
 
 def checked(puzzle, size, options=[]):
 	if len(puzzle) != size:
