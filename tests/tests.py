@@ -40,6 +40,21 @@ class Parser(TestCase):
     def test(self):
         self.test_invalid()
 
+class Large(TestCase):
+    def test_large(self):
+        print(bcolors.HEADER + "-----LARGE FILES-----")
+        files = listdir(join(getcwd(), "puzzles/large"))
+        for fname in files:
+            print(bcolors.OKBLUE + fname)
+            path = join(getcwd(), "puzzles/large", fname)
+            try:
+                out1 = subprocess.check_output([p_path, path], timeout=5)
+                print(out1.decode())
+            except subprocess.TimeoutExpired as e:
+                print(str(e))
+    def test(self):
+        self.test_large()
+
 class Main(TestCase):
     def test_main(self):
         print(bcolors.HEADER + "-----VALIDS-----")
@@ -55,13 +70,17 @@ class Main(TestCase):
         
 
 if __name__ == "__main__":
-    allargs = ["parser", "main"]
+    allargs = ["parser", "main", "large"]
     args = [e for e in sys.argv if e in allargs]
     args = allargs if len(args) == 0 else args
 
     if "parser" in args:
         parser = Parser()
         parser.test()
+
+    if "large" in args:
+        large = Large()
+        large.test()
     
     if "main" in args:
         main = Main()
