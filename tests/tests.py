@@ -51,7 +51,7 @@ class Large(TestCase):
                 out1 = subprocess.check_output([p_path, path], timeout=5)
                 print(out1.decode())
             except subprocess.TimeoutExpired as e:
-                print(str(e))
+                print(f'{bcolors.FAIL} {str(e)} {bcolors.ENDC} \n')
     def test(self):
         self.test_large()
 
