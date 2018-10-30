@@ -8,25 +8,22 @@ except ImportError:
 	import queue as Q
 
 def get_goal(size):
-	#Todo: do real thing
 	return make_goal(size)
 
 def get_empty_coords(grid, size):
 	for y in range(size):
 		for x in range(size):
-			if grid[x][y] == 0:
+			if grid[y][x] == 0:
 				return (x, y)
 
 def get_swap(grid, ax, ay, bx, by, s):
 	if by == s or by < 0 or bx == s or bx < 0:
-		return
+		return None
 	lst = list(grid)
 	lst = [list(e) for e in lst]
-	tmp = lst[ax][ay]
-	lst[ax][ay] = lst[bx][by]
-	lst[bx][by] = tmp
-	# print(lst)
-	return tuple([tuple(l) for l in lst])
+	lst[ay][ax] = lst[by][bx]
+	lst[by][bx] = 0
+	return tuple(tuple(l) for l in lst)
 
 def get_neighbors(grid, size):
 	x, y = get_empty_coords(grid, size)
@@ -43,13 +40,6 @@ def get_goal_dict(goal, size):
 		for x in range(size):
 			goal_dict[str(goal[y][x])] = (x, y)
 	return goal_dict
-
-def get_is_goal(grid, goal, size):
-	for y in range(size):
-		for x in range(size):
-			if grid[x][y] != goal[x][y]:
-				return False
-	return True
 
 def solve(a, size):
 	opensq = Q.PriorityQueue()
@@ -82,6 +72,7 @@ def solve(a, size):
 			if n not in g_scores or g < g_scores[n]:
 				parents[n] = current
 				g_scores[n] = g
-				f_scores[n] = get_h_score(n, goal, goal_dict, size) + g
+				h = get_h_score(n, goal, goal_dict, size)
+				f_scores[n] = h + g
 				opensq.put((f_scores[n], n))
 		i += 1
