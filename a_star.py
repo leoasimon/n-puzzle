@@ -1,78 +1,84 @@
 from heuristics import get_h_score
 from printer import print_solution, get_path
 from generator import make_goal
+import numpy as np
 
 try:
 	import Queue as Q  # ver. < 3.0
 except ImportError:
 	import queue as Q
 
-def get_goal(size):
+def get_goal(size) -> np.matrix:
 	return make_goal(size)
 
 def get_empty_coords(grid, size):
-	for y in range(size):
-		for x in range(size):
-			if grid[y][x] == 0:
-				return (x, y)
+	pos_empty = np.where(grid == 0)
+	return tuple(z[0] for z in pos_empty) # note: returns y, x
 
 def get_swap(grid, ax, ay, bx, by, s):
 	if by == s or by < 0 or bx == s or bx < 0:
 		return None
-	lst = list(grid)
-	lst = [list(e) for e in lst]
-	lst[ay][ax] = lst[by][bx]
-	lst[by][bx] = 0
-	return tuple(tuple(l) for l in lst)
+	grid_copy = np.array(grid)
+	grid_copy[ay, ax] = grid[by, bx]
+	grid_copy[by, bx] = 0
+	return grid_copy
 
 def get_neighbors(grid, size):
-	x, y = get_empty_coords(grid, size)
+	y, x = get_empty_coords(grid, size)
 	u = get_swap(grid, x, y, x, y + 1, size)
 	r = get_swap(grid, x, y, x - 1, y, size)
 	d = get_swap(grid, x, y, x, y - 1, size)
 	l = get_swap(grid, x, y, x + 1, y, size)
-	return [e for e in [u,r,d,l] if e]
+	return [e for e in [u,r,d,l] if e is not None]
 
 # dict of tuples representing (x, y) of each goal grid value
 def get_goal_dict(goal, size):
 	goal_dict = {}
 	for y in range(size):
 		for x in range(size):
-			goal_dict[str(goal[y][x])] = (x, y)
+			goal_dict[str(goal[y, x])] = (x, y)
 	return goal_dict
 
 def solve(a, size):
+	a = np.array(a, dtype=np.uint8)
+	a_str = tuple(a.flatten())
+
+	# print(f'a_str : {a_str}')
 	opensq = Q.PriorityQueue()
 	g_scores = {}
 	f_scores = {}
 	parents = {}
-	goal = get_goal(size)
+	goal = np.array(get_goal(size), dtype=np.uint8)
+	goal_str = tuple(goal.flatten())
 	goal_dict = get_goal_dict(goal, size)
 
-	parents[a] = None
-	g_scores[a] = 0
-	f_scores[a] = get_h_score(a, goal, goal_dict, size)
+	parents[a_str] = None
+	g_scores[a_str] = 0
+	f_scores[a_str] = get_h_score(a, goal, goal_dict, size)
 
-	if a == goal:
-		return get_path(a, parents, 0)
+	if np.array_equal(a, goal):
+		print(f'Found solution with 0 moves.')
+		return print_solution(a_str, parents, 0)
 
-	opensq.put((f_scores[a], a))
+	opensq.put((f_scores[a_str], a_str, a))
 
 	i = 1
 	while not opensq.empty():
-		current = opensq.get()[1]
-		neighbors = get_neighbors(current, size)
-		g = g_scores[current] + 1
+		_, curr_str, curr = opensq.get()
+		neighbors = get_neighbors(curr, size)
+		g = g_scores[curr_str] + 1
 
 		for n in neighbors:
-			if n == goal:
-				parents[n] = current
-				return print_solution(n, parents, 0)
+			n_str = tuple(n.flatten())
+			if n_str == goal_str:
+				parents[n_str] = curr_str
+				print(f'Found solution with {g} moves.')
+				return print_solution(n_str, parents, 0)
 
-			if n not in g_scores or g < g_scores[n]:
-				parents[n] = current
-				g_scores[n] = g
+			if n_str not in g_scores or g < g_scores[n_str]:
+				parents[n_str] = curr_str
+				g_scores[n_str] = g
 				h = get_h_score(n, goal, goal_dict, size)
-				f_scores[n] = h + g
-				opensq.put((f_scores[n], n))
+				f_scores[n_str] = h + g
+				opensq.put((f_scores[n_str], n_str, n))
 		i += 1
