@@ -15,7 +15,7 @@ if __name__ == '__main__':
 	# for j, e in enumerate(path):
 	# 	print(f'move: {j}', end=' ')
 	# 	print(e)
-	# if "g" in options:
-	# 	display_all(size, path)
+	if "g" in options:
+		display_all(size, path)
 	sys.exit(0)
 	
