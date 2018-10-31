@@ -2,6 +2,7 @@ import sys
 import random
 from PySide2 import QtWidgets, QtGui
 from PySide2.QtCore import *
+import numpy as np
 
 class MyScene(QtWidgets.QGraphicsScene):
     def __init__(self, s, grids):
@@ -30,6 +31,7 @@ class MyScene(QtWidgets.QGraphicsScene):
                     self.addRect(y * 100, x * 100, 100, 100)
 
 def display_all(s, grids):
+    grids = [np.asarray(g).reshape(3,3) for g in grids]
     app = QtWidgets.QApplication([])
     scene = MyScene(s, grids)
     view = QtWidgets.QGraphicsView(scene)
