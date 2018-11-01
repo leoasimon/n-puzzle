@@ -56,4 +56,6 @@ class Manhattan(TestCase):
 		self.assertEqual(24, h, f'{bcolors.FAIL} wrong h score for hardest_3x3 {bcolors.ENDC}')
 	
 if __name__ == '__main__':
+	if '-v' not in sys.argv:
+		print(f'{bcolors.OKBLUE} Recommended usage: ./heuristics.py -v {bcolors.ENDC}')
 	ut.main()
