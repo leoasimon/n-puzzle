@@ -2,6 +2,7 @@ from heuristics import get_h_score
 from printer import print_solution, get_path
 from generator import make_goal
 import numpy as np
+import sys
 
 try:
 	import Queue as Q  # ver. < 3.0
@@ -45,6 +46,7 @@ def solve(a, size):
 
 	# print(f'a_str : {a_str}')
 	opensq = Q.PriorityQueue()
+
 	g_scores = {}
 	f_scores = {}
 	parents = {}
@@ -54,25 +56,51 @@ def solve(a, size):
 
 	parents[a_str] = None
 	g_scores[a_str] = 0
-	f_scores[a_str] = get_h_score(a, goal, goal_dict, size)
+
+	h = get_h_score(a, goal, goal_dict, size)
+	f_scores[a_str] = h
 
 	if np.array_equal(a, goal):
 		print(f'Found solution with 0 moves.')
 		return print_solution(a_str, parents, 0)
 
 	opensq.put((f_scores[a_str], a_str, a))
+	
+	opened = set()
+	opened.add(a_str)
+	closed = set()
+	print(f'opened: {opened}')
 
 	i = 1
+	j = 1
+	len_opensq = 1
+	len_open_set = 1
+	max_h_score = h
+	max_f_score = f_scores[a_str]
 	while not opensq.empty():
 		_, curr_str, curr = opensq.get()
+		if curr_str in opened: 
+			opened.remove(curr_str)
+		closed.add(curr_str)
+
 		neighbors = get_neighbors(curr, size)
 		g = g_scores[curr_str] + 1
 
+		# print(f'sum([i for i in range[size * size]]): {sum(i for i in range(size * size))}')
+		# print(f'size * size: {size * size}')
+		# print(f'size * size * size: {size * size * size}')
+		
+
 		for n in neighbors:
+			j += 1
 			n_str = tuple(n.flatten())
+
 			if n_str == goal_str:
 				parents[n_str] = curr_str
 				print(f'Found solution with {g} moves.')
+				print(f'j: {j}')
+				print(f'max_f_score: {max_f_score}')
+				print(f'max_h_score: {max_h_score}')
 				return print_solution(n_str, parents, 0)
 
 			if n_str not in g_scores or g < g_scores[n_str]:
@@ -81,4 +109,15 @@ def solve(a, size):
 				h = get_h_score(n, goal, goal_dict, size)
 				f_scores[n_str] = h + g
 				opensq.put((f_scores[n_str], n_str, n))
+				len_opensq = max(opensq.qsize(), len_opensq)
+				len_open_set = max(len(opened), len_open_set)
+				max_f_score = max((f_scores[n_str], max_f_score))
+				max_h_score = max((max_h_score, h))
+
+		# print(f'\nlen_opensq: {len_opensq}')
+		# print(f'len_open_set: {len_open_set}')
+		# print(f'max_f_score: {max_f_score}')
+		# print(f'max_h_score: {max_h_score}')
+		# sys.exit()
 		i += 1
+	
