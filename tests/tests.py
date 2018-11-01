@@ -48,7 +48,7 @@ class Large(TestCase):
             print(bcolors.OKBLUE + fname)
             path = join(getcwd(), "puzzles/large", fname)
             try:
-                out1 = subprocess.check_output([p_path, path], timeout=5)
+                out1 = subprocess.check_output([p_path, path], timeout=2)
                 print(out1.decode())
             except subprocess.TimeoutExpired as e:
                 print(f'{bcolors.FAIL} {str(e)} {bcolors.ENDC} \n')

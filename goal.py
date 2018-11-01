@@ -2,6 +2,7 @@
 
 from collections import deque
 from printer import print_grid 
+import numpy as np
 import sys
 
 def make_loop(grid, size): # TODO: Refactor for legibility
@@ -51,7 +52,13 @@ def make_loop(grid, size): # TODO: Refactor for legibility
     return grid
 
 def make_goal(size):
-    grid = [[0 for i in range(size)] for x in range(size)]
-    grid = make_loop(grid, size)
-    grid = tuple(tuple(x) for x in grid)
-    return grid
+    grid = np.zeros((size, size), dtype=np.uint8)
+    return make_loop(grid, size)
+
+# return: dict of tuples representing (x, y) of each goal grid value
+def get_goal_dict(goal, size):
+	goal_dict = {}
+	for y in range(size):
+		for x in range(size):
+			goal_dict[str(goal[y, x])] = (x, y)
+	return goal_dict
