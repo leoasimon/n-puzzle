@@ -31,7 +31,7 @@ class MyScene(QtWidgets.QGraphicsScene):
                     self.addRect(y * 100, x * 100, 100, 100)
 
 def display_all(s, grids):
-    grids = [np.asarray(g).reshape(3,3) for g in grids]
+    grids = [np.asarray(g).reshape(s,s) for g in grids]
     app = QtWidgets.QApplication([])
     scene = MyScene(s, grids)
     view = QtWidgets.QGraphicsView(scene)
