@@ -31,7 +31,7 @@ def get_neighbors(grid, size):
 	l = get_swap(grid, x, y, x + 1, y, size)
 	return [e for e in [u,r,d,l] if e is not None]
 
-def solve(a, size):
+def solve(a, size, options):
 	a_str = tuple(a.flatten())
 
 	# print(f'a_str : {a_str}')
@@ -45,7 +45,7 @@ def solve(a, size):
 
 	parents[a_str] = None
 	g_scores[a_str] = 0
-	f_scores[a_str] = get_h_score(a, goal, goal_dict, size)
+	f_scores[a_str] = get_h_score(a, goal, goal_dict, size, options)
 
 	if np.array_equal(a, goal):
 		print(f'Found solution with 0 moves.')
@@ -69,7 +69,7 @@ def solve(a, size):
 			if n_str not in g_scores or g < g_scores[n_str]:
 				parents[n_str] = curr_str
 				g_scores[n_str] = g
-				h = get_h_score(n, goal, goal_dict, size)
+				h = get_h_score(n, goal, goal_dict, size, options)
 				f_scores[n_str] = h + g
 				opensq.put((f_scores[n_str], n_str, n))
 		i += 1

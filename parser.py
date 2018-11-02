@@ -50,4 +50,4 @@ def parse():
 		size = int(lines.pop(0)[0])
 
 		lines = [get_int_lst(l) for l in lines]
-		return (np.array(lines, dtype=np.uint8), size, [])
+		return (np.array(lines, dtype=np.uint8), size, options)

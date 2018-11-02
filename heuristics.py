@@ -55,6 +55,9 @@ def get_manhattan(grid, goal, goal_dict, size):
 				diff += abs(x - goal_pos_x) + abs(y - goal_pos_y)
 	return diff
 
-def get_h_score(grid, goal, goal_dict, size):
+def get_h_score(grid, goal, goal_dict, size, options):
 	# Todo: chose one heuristic, default manhattan
-	return get_manhattan(grid, goal, goal_dict, size)
+	m = get_manhattan(grid, goal, goal_dict, size)
+	if "lc" in options:
+		return m + get_linear_conflicts(grid, goal, goal_dict, size)
+	return m

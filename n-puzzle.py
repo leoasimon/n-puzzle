@@ -11,7 +11,7 @@ from gui import display_all
 
 if __name__ == '__main__':
 	a, size, options = parse()
-	path = solve(a, size)
+	path = solve(a, size, options)
 	# for j, e in enumerate(path):
 	# 	print(f'move: {j}', end=' ')
 	# 	print(e)
