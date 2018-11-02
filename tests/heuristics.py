@@ -10,13 +10,13 @@ from unittest.mock import patch
 import unittest as ut
 sys.path.insert(0, join(getcwd(), "../"))
 from parser import parsefile
+import numpy as np
 
-from heuristics import get_manhattan
+from heuristics import get_manhattan, get_linear_conflicts
 from goal import get_goal_dict, make_goal
 
 dir_path = dirname(realpath(__file__))
 p_path = join(dir_path, "../n-puzzle.py")
-print(p_path)
 
 class bcolors:
     HEADER = '\033[95m'
@@ -54,6 +54,37 @@ class Manhattan(TestCase):
 		grid, _, _ = parsefile(f)
 		h = get_manhattan(grid, self.goal, self.goal_dict, self.size)
 		self.assertEqual(24, h, f'{bcolors.FAIL} wrong h score for hardest_3x3 {bcolors.ENDC}')
+
+class LinearC(TestCase):
+	def setUp(self):
+		self.size = 3
+		self.goal = make_goal(self.size)
+		self.goal_dict = get_goal_dict(self.goal, self.size)
+	
+	def test_linear_conflicts_row(self):
+		g = np.array([[3,1,2],[8,0,4],[7,6,5]])
+		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)
+		self.assertEqual(2, lc, f'{bcolors.FAIL} wrong lc score {bcolors.ENDC}')
+	
+	def test_linear_conflicts_col(self):
+		g = np.array([[8,2,3],[1,0,4],[7,6,5]])
+		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)
+		self.assertEqual(2, lc, f'{bcolors.FAIL} wrong lc score {bcolors.ENDC}')
+	
+	def test_linear_conflicts_row_tricky(self):
+		g = np.array([[3,2,1],[8,0,4],[7,6,5]])
+		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)
+		self.assertEqual(4, lc, f'{bcolors.FAIL} wrong lc score {bcolors.ENDC}')
+	
+	def test_linear_conflicts_col_tricky(self):
+		g = np.array([[7,2,3],[8,0,4],[1,6,5]])
+		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)
+		self.assertEqual(4, lc, f'{bcolors.FAIL} wrong lc score {bcolors.ENDC}')
+	
+	def test_linear_conflicts_col_and_row(self):
+		g = np.array([[7,2,3],[8,0,4],[1,5,6]])
+		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)
+		self.assertEqual(6, lc, f'{bcolors.FAIL} wrong lc score {bcolors.ENDC}')
 	
 if __name__ == '__main__':
 	if '-v' not in sys.argv:
