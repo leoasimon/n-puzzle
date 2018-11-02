@@ -1,6 +1,6 @@
 from heuristics import get_h_score
 from printer import print_solution, get_path
-from generator import make_goal
+from goal import make_goal, get_goal_dict
 import numpy as np
 
 try:
@@ -31,16 +31,7 @@ def get_neighbors(grid, size):
 	l = get_swap(grid, x, y, x + 1, y, size)
 	return [e for e in [u,r,d,l] if e is not None]
 
-# dict of tuples representing (x, y) of each goal grid value
-def get_goal_dict(goal, size):
-	goal_dict = {}
-	for y in range(size):
-		for x in range(size):
-			goal_dict[str(goal[y, x])] = (x, y)
-	return goal_dict
-
 def solve(a, size):
-	a = np.array(a, dtype=np.uint8)
 	a_str = tuple(a.flatten())
 
 	# print(f'a_str : {a_str}')
@@ -48,7 +39,7 @@ def solve(a, size):
 	g_scores = {}
 	f_scores = {}
 	parents = {}
-	goal = np.array(get_goal(size), dtype=np.uint8)
+	goal = get_goal(size)
 	goal_str = tuple(goal.flatten())
 	goal_dict = get_goal_dict(goal, size)
 
