@@ -11,7 +11,7 @@ except ImportError:
 def get_goal(size) -> np.matrix:
 	return make_goal(size)
 
-def get_empty_coords(grid, size):
+def get_empty_coords(grid):
 	pos_empty = np.where(grid == 0)
 	return tuple(z[0] for z in pos_empty) # note: returns y, x
 
@@ -24,7 +24,7 @@ def get_swap(grid, ax, ay, bx, by, s):
 	return grid_copy
 
 def get_neighbors(grid, size):
-	y, x = get_empty_coords(grid, size)
+	y, x = get_empty_coords(grid)
 	u = get_swap(grid, x, y, x, y + 1, size)
 	r = get_swap(grid, x, y, x - 1, y, size)
 	d = get_swap(grid, x, y, x, y - 1, size)
