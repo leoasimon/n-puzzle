@@ -6,11 +6,10 @@ def _get_sides(grid, n, maxval, v=1, x=0, y=0):
 	if v > maxval:
 		return grid
 
-	max_i = v + 4 * (n - 1)
-	while v < max_i:
+	for _ in range(4):
 		if v <= maxval:
 			vec = np.arange(v, v + n - 1)
-			grid[y, x:x+vec.shape[0]] = vec.copy()
+			grid[y, x:x+vec.shape[0]] = vec
 		v += n - 1
 		grid = np.rot90(grid)
 	return _get_sides(grid, n - 2, maxval, v, x+1, y+1)
