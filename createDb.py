@@ -2,6 +2,7 @@ from heuristics import get_h_score
 from printer import print_solution, get_path
 from goal import make_goal, get_goal_dict
 import numpy as np
+from collections import deque
 
 try:
 	import Queue as Q  # ver. < 3.0
@@ -30,30 +31,58 @@ def get_neighbors(grid, size):
 
 def createDb():
 	size = 4
-	goal = np.array([
+	a = np.array([
 		[1,-1,-1,-1],
-		[12,15,-1,-1],
-		[11,0,-1,-1],
+		[12,13,-1,-1],
+		[11,-1,-1,-1],
 		[10,9,-1,-1],
 	])
-	goal_str = tuple(goal.flatten())
+	b = np.array([
+		[-1,2,3,4],
+		[-1,-1,-1,-1],
+		[-1,-1,-1,-1],
+		[-1,-1,-1,-1],
+	])
+	c = np.array([
+		[-1,-1,-1,-1],
+		[-1,-1,14,5],
+		[-1,-1,15,6],
+		[-1,-1,8,7],
+	])
+	grid = np.array([
+		[1,2,3,4],
+		[12,13,14,5],
+		[11,0,15,6],
+		[10,9,8,7],
+	])
 	
-	a = goal
-	a_str = goal_str
+	closed = set()
+	
+	grid_str = tuple(grid.flatten())
+	opens = deque()
+	opens.append(grid_str)
+	g_scores = {grid_str: 0}
+	goals = [a,b,c]
 
-	# print(f'a_str : {a_str}')
-	opens = [a]
-	h_scores = {}
-	goal_dict = get_goal_dict(goal, size)
-
+	i = 0
 	while opens:
-		curr = opens.pop(0)
+		curr_str = opens.popleft()
+		curr = np.asarray(curr_str).reshape(size, size)
 		neighbors = get_neighbors(curr, size)
-
 		for n in neighbors:
-			n_str = n.flatten()
 			n_str = tuple(n.flatten())
-			if n_str not in h_scores:
-				h_scores[n_str] = get_h_score(n, goal, goal_dict, size, [])
-				opens.append(n)
-	print("yeah")
+			if n_str in closed:
+				continue
+			if n_str not in opens:
+				opens.append(n_str)
+				for g in goals:
+					filtered = np.where(n == g, g, -1)
+					if not np.array_equal(filtered, g):
+						s = np.where(g != -1, n, -1)
+						g_score = g_scores[curr_str] + 1
+						s_key = tuple(s.flaten())
+						if s_key not in g_scores or g_score < g_scores[s_key]:
+							g_scores[s_key] = g_score
+							opens.append(n)
+		closed.add(curr_str)
+		i += 1
