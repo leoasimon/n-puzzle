@@ -66,10 +66,14 @@ def solve(a, size, options):
 				print(f'Found solution with {g} moves.')
 				return print_solution(n_str, parents, 0)
 
-			if n_str not in g_scores or g < g_scores[n_str]:
-				parents[n_str] = curr_str
-				g_scores[n_str] = g
+			if n_str not in g_scores:
 				h = get_h_score(n, goal, goal_dict, size, options)
 				f_scores[n_str] = h + g
-				opensq.put((f_scores[n_str], n_str, n))
+			elif g < g_scores[n_str]:
+				f_scores[n_str] -= g - g_scores[n_str]
+			else:
+				continue
+			parents[n_str] = curr_str
+			g_scores[n_str] = g
+			opensq.put((f_scores[n_str], n_str, n))
 		i += 1
