@@ -3,6 +3,7 @@ from printer import print_solution, get_path
 from goal import make_goal, get_goal_dict
 import numpy as np
 from collections import deque
+import json
 
 try:
 	import Queue as Q  # ver. < 3.0
@@ -29,6 +30,14 @@ def get_neighbors(grid, size):
 	l = get_swap(grid, x, y, x + 1, y, size)
 	return [e for e in [u,r,d,l] if e is not None]
 
+def build_key(arr, nums):
+	key = ""
+	for n in nums:
+		y, x = np.where(arr == n)
+		if len(x) and len(y):
+			key += str(x[0]) + str(y[0])
+	return key
+
 def createDb():
 	size = 4
 	a = np.array([
@@ -49,13 +58,7 @@ def createDb():
 		[-1,-1,15,6],
 		[-1,-1,8,7],
 	])
-	grid = np.array([
-		[1,2,3,4],
-		[12,13,14,5],
-		[11,0,15,6],
-		[10,9,8,7],
-	])
-	
+	grid = make_goal(size)
 	closed = set()
 	
 	grid_str = tuple(grid.flatten())
@@ -74,15 +77,29 @@ def createDb():
 			if n_str in closed:
 				continue
 			if n_str not in opens:
+				g_scores[n_str] = g_scores[curr_str] + 1
 				opens.append(n_str)
-				for g in goals:
-					filtered = np.where(n == g, g, -1)
-					if not np.array_equal(filtered, g):
-						s = np.where(g != -1, n, -1)
-						g_score = g_scores[curr_str] + 1
-						s_key = tuple(s.flaten())
-						if s_key not in g_scores or g_score < g_scores[s_key]:
-							g_scores[s_key] = g_score
-							opens.append(n)
 		closed.add(curr_str)
 		i += 1
+	
+
+	dbs = [{},{},{}]
+	nums_a = [e for e in a.flatten() if e != -1]
+	nums_b = [e for e in b.flatten() if e != -1]
+	nums_c = [e for e in c.flatten() if e != -1]
+	nums_all = [nums_a, nums_b, nums_c]
+	for e_str in closed:
+		e = np.asarray(e_str).reshape(size, size)
+		score = g_scores[e_str]
+		for i, g, nums in zip(range(3), goals, nums_all):
+			db = dbs[i]
+			t = np.where(g != -1, e, -1)
+			key = build_key(t, nums)
+			if key in db and db[key] < score:
+				continue
+			db[key] = score
+	
+	for db, name in zip(dbs, ["4x4_a", "4x4_b", "4x4_c"]):
+		with open(name, "w") as f:
+			jf = json.dumps(db)
+			f.write(jf)
