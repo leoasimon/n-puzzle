@@ -1,5 +1,6 @@
 .vscode
-.pyc
+*.pyc
 __pycache__/
 test_*
 *.cprof
+*.json

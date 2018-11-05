@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+# 
 from heuristics import get_h_score
 from printer import print_solution, get_path
 from goal import make_goal, get_goal_dict
@@ -156,7 +158,7 @@ def createDb():
 				continue
 			db[key] = score
 	
-	for db, name in zip(dbs, ["4x4_a", "4x4_b", "4x4_c"]):
+	for db, name in zip(dbs, ["4x4_a.json", "4x4_b.json", "4x4_c.json"]):
 		with open(name, "w") as f:
 			print(name)
 			jf = json.dumps(db)
