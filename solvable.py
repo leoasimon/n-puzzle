@@ -14,7 +14,7 @@ def _get_inversions(grid1D):
 				inversions += 1
 	return inversions
 
-def get_valid(grid, size):
+def get_solvable(grid, size):
 	# each legal vertical move changes total inversions, horizontal moves do not
 	# vertical moves change polarity of total inversions only if board width is odd
 	# http://www.cs.bham.ac.uk/~mdr/teaching/modules04/java2/TilesSolvability.html
