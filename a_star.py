@@ -70,7 +70,7 @@ def solve(a, size, options):
 				h = get_h_score(n, goal, goal_dict, size, options)
 				f_scores[n_str] = h + g
 			elif g < g_scores[n_str]:
-				f_scores[n_str] -= g - g_scores[n_str]
+				f_scores[n_str] -= g_scores[n_str] - g
 			else:
 				continue
 			parents[n_str] = curr_str
