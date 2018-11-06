@@ -1,5 +1,5 @@
 import numpy as np
-import scipy.spatial.distance
+import scipy.spatial.distance as ssd
 import operator
 
 from bfs import build_key
@@ -26,7 +26,6 @@ def get_lc_line(row, goal_row):
 				counts[e] +=1
 	if not counts:
 		return 0
-	m = max(counts.items(), key=operator.itemgetter(1))[0]
 	return sum([v - 1 for v in counts.values()]) + 1
 
 def get_linear_conflicts(grid, goal, goal_dict, size):
@@ -54,36 +53,29 @@ def get_pattern_cost(grid, size):
 	return diff
 
 def get_manhattan_plus_linear_conflict(grid, goal, goal_dict, size):
-	diff_x = 0
-	diff_y = 0
+	diff = 0
+	m = 0
+	for i in range(size):
+		col = grid[:,i]
+		row = grid[i,:]
+		goal_col = goal[:,i]
+		goal_row = goal[i,:]
+		diff += get_lc_line(list(row), list(goal_row))
+		diff += get_lc_line(list(col), list(goal_col))
 
-	for y in range(size):
-		for x, val in enumerate(grid[y]):
-			if val:
-				goal_pos_x, goal_pos_y = goal_dict[str(val)]
-				if goal_pos_x == x:
-					diff_x += len([vh for vh in grid[y, x:] if val > vh and goal_dict[str(vh)][0] == y])
-					
-				diff_x += abs(x - goal_pos_x)
-				diff_y += abs(y - goal_pos_y)
-	return diff_x + diff_y
-
+		#TODO: This is prob not optimal... also test...
+		m += sum([ssd.cdist([[j, i]], [goal_dict[str(x)]], 'cityblock') for j, x in enumerate(row) if x])
+	return diff + m # * 2? TODO
 
 def get_manhattan(grid, goal, goal_dict, size):
 	diff = 0
-	# TODO: Try iterators instead...? I tried this, but it doesn't seem faster	
-	# it = np.nditer(grid, flags=['multi_index'])
-	# while not it.finished:
-	# 	goal_pos_x, goal_pos_y = goal_dict[str(it[0])]
-	# 	diff += abs(it.multi_index[0] - goal_pos_y) + abs(it.multi_index[1] - goal_pos_x)
-	# 	it.iternext()
 
-	# Without iterators:
 	for y in range(size):
 		for x, val in enumerate(grid[y]):
 			if val:
 				goal_pos_x, goal_pos_y = goal_dict[str(val)]
 				diff += abs(x - goal_pos_x) + abs(y - goal_pos_y)
+	# print(f'diff : {diff}')
 	return diff
 
 def get_h_score(grid, goal, goal_dict, size, options):
