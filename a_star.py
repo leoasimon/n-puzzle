@@ -57,13 +57,13 @@ def solve(a, size, options):
 	while not opensq.empty():
 		_, curr_str, curr = opensq.get()
 		neighbors = get_neighbors(curr, size)
-		g = g_scores[curr_str] + 1
+		g = g_scores[curr_str] + 1 if "greedy" not in options else 0
 
 		for n in neighbors:
 			n_str = tuple(n.flatten())
 			if n_str == goal_str:
 				parents[n_str] = curr_str
-				print(f'Found solution with {g} moves.')
+				print(f'Found solution with {g if "greedy" not in options else i} moves.')
 				return print_solution(n_str, parents, 0)
 
 			if n_str not in g_scores:
