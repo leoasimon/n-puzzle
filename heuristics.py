@@ -53,6 +53,22 @@ def get_pattern_cost(grid, size):
 		diff += db[key] if key in db else 0
 	return diff
 
+def get_manhattan_plus_linear_conflict(grid, goal, goal_dict, size):
+	diff_x = 0
+	diff_y = 0
+
+	for y in range(size):
+		for x, val in enumerate(grid[y]):
+			if val:
+				goal_pos_x, goal_pos_y = goal_dict[str(val)]
+				if goal_pos_x == x:
+					diff_x += len([vh for vh in grid[y, x:] if val > vh and goal_dict[str(vh)][0] == y])
+					
+				diff_x += abs(x - goal_pos_x)
+				diff_y += abs(y - goal_pos_y)
+	return diff_x + diff_y
+
+
 def get_manhattan(grid, goal, goal_dict, size):
 	diff = 0
 	# TODO: Try iterators instead...? I tried this, but it doesn't seem faster	
@@ -73,7 +89,10 @@ def get_manhattan(grid, goal, goal_dict, size):
 def get_h_score(grid, goal, goal_dict, size, options):
 	if "db" in options:
 		return get_pattern_cost(grid, size)
-	m = get_manhattan(grid, goal, goal_dict, size)
-	if "lc" in options:
+	elif "lc" in options:
+		m = get_manhattan(grid, goal, goal_dict, size)
 		return m + get_linear_conflicts(grid, goal, goal_dict, size)
-	return m
+	elif "lcm" in options:
+		return get_manhattan_plus_linear_conflict(grid, goal, goal_dict, size)
+	else:
+		return get_manhattan(grid, goal, goal_dict, size)
