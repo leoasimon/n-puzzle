@@ -53,6 +53,7 @@ def get_pattern_cost(grid, size):
 	return diff
 
 def get_manhattan_plus_linear_conflict(grid, goal, goal_dict, size):
+	#TODO: Broken :)
 	diff = 0
 	m = 0
 	for i in range(size):

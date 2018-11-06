@@ -1,0 +1,16 @@
+- Figure out what to do with very large puzzles ("manage various puzzle sizes (3, 4, 5, 17, etc ...).")
+- Figure out if need to make own random generator ? "randomly determined states (of your own generation of course)"
+- Add misplaced tiles -- "at LEAST 3 (relevant) heuristic functions"
+- At end of search, show "Total number of states ever selected in the "opened" set (complexity in time)"
+	- "" "" Maximum number of states ever represented in memory at the same time during the search (complexity in size)
+	- Show number of moves: "Number of moves required to transition from the initial state to the final state, according to the search"
+	- Plaintext version of sequence of states (already have in main): "The ordered sequence of states that make up the solution, according to the search"
+- Pattern DB: 4x4, 5x5
+- Make DB access fast
+- Ameliorer GUI (display info above ^)
+	- Limit when puzzle is certain size
+	- Square size
+- Get stuff working on 4x4+ size puzzles!!
+	- Line profiler
+- Test Linear Conflict
+- Add more invalid files to puzzles and test
