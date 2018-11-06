@@ -1,4 +1,3 @@
-from heuristics import get_h_score
 import numpy as np
 from collections import deque
 

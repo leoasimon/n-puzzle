@@ -2,8 +2,8 @@ import numpy as np
 import scipy.spatial.distance
 import operator
 
-from create_db import get_goals, get_db
 from bfs import build_key
+from create_db import get_db, get_goals
 
 def get_lc_line(row, goal_row):
 	conflicts = []

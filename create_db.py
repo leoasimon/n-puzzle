@@ -15,8 +15,6 @@ def get_db(s, n):
 	with open(name, "r") as f:
 		return json.load(f)
 
-
-
 def get_goals(size):
 	#Todo: handle different sizes
 	a = np.array([
