@@ -2,6 +2,9 @@ import numpy as np
 import scipy.spatial.distance
 import operator
 
+from create_db import get_goals, get_db
+from bfs import build_key
+
 def get_lc_line(row, goal_row):
 	conflicts = []
 	counts = {}
@@ -38,6 +41,18 @@ def get_linear_conflicts(grid, goal, goal_dict, size):
 		diff += get_lc_line(list(col), list(goal_col))
 	return diff * 2
 
+#Todo: store db somewhere so we don't have to open the file any times
+def get_pattern_cost(grid, size):
+	diff = 0
+	goals = get_goals(size)
+	for g, name in zip(goals, ['a', 'b', 'c']):
+		nums = [e for e in g.flatten() if e != -1]
+		filtered = np.where(g != 0, grid, -1)
+		key = build_key(filtered, nums)
+		db = get_db(size, name)
+		diff += db[key] if key in db else 0
+	return diff
+
 def get_manhattan(grid, goal, goal_dict, size):
 	diff = 0
 	# TODO: Try iterators instead...? I tried this, but it doesn't seem faster	
@@ -56,7 +71,8 @@ def get_manhattan(grid, goal, goal_dict, size):
 	return diff
 
 def get_h_score(grid, goal, goal_dict, size, options):
-	# Todo: chose one heuristic, default manhattan
+	if "db" in options:
+		return get_pattern_cost(grid, size)
 	m = get_manhattan(grid, goal, goal_dict, size)
 	if "lc" in options:
 		return m + get_linear_conflicts(grid, goal, goal_dict, size)
