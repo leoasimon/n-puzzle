@@ -1,5 +1,4 @@
 import numpy as np
-import scipy.spatial.distance as ssd
 import operator
 
 from bfs import build_key
@@ -69,9 +68,7 @@ def get_manhattan_plus_linear_conflict(grid, goal, goal_dict, size):
 		goal_row = goal[i,:]
 		diff += get_lc_line(list(row), list(goal_row))
 		diff += get_lc_line(list(col), list(goal_col))
-
-		#TODO: This is prob not optimal... also test...
-		m += sum([ssd.cdist([[j, i]], [goal_dict[str(x)]], 'cityblock') for j, x in enumerate(row) if x])
+		#TODO: Manhattan.
 	return diff + m # * 2? TODO
 
 def get_manhattan(grid, goal, goal_dict, size):

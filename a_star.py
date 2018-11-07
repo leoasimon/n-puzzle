@@ -2,11 +2,7 @@ from heuristics import get_h_score
 from printer import print_solution, get_path
 from goal import make_goal, get_goal_dict
 import numpy as np
-
-try:
-	import Queue as Q  # ver. < 3.0
-except ImportError:
-	import queue as Q
+import heapq
 
 def get_goal(size) -> np.matrix:
 	return make_goal(size)
@@ -35,7 +31,7 @@ def solve(a, size, options):
 	a_str = tuple(a.flatten())
 
 	# print(f'a_str : {a_str}')
-	opensq = Q.PriorityQueue()
+	opensq = []
 	g_scores = {}
 	f_scores = {}
 	parents = {}
@@ -51,11 +47,11 @@ def solve(a, size, options):
 		print(f'Found solution with 0 moves.')
 		return print_solution(a_str, parents, 0)
 
-	opensq.put((f_scores[a_str], a_str, a))
+	heapq.heappush(opensq, (f_scores[a_str], a_str, a))
 
 	i = 1
-	while not opensq.empty():
-		_, curr_str, curr = opensq.get()
+	while len(opensq):
+		_, curr_str, curr = heapq.heappop(opensq)
 		neighbors = get_neighbors(curr, size)
 		g = g_scores[curr_str] + 1 if "greedy" not in options else 0
 
@@ -75,5 +71,5 @@ def solve(a, size, options):
 				continue
 			parents[n_str] = curr_str
 			g_scores[n_str] = g
-			opensq.put((f_scores[n_str], n_str, n))
+			heapq.heappush(opensq, (f_scores[n_str], n_str, n))
 		i += 1
