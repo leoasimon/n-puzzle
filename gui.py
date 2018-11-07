@@ -12,10 +12,11 @@ class MyScene(QtWidgets.QGraphicsScene):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.display_next)
         self.timer.start(500)
-        self.display_next()
-    def display_all(self):
-        for grid in self.grids:
-            display(self.s, grid, self)
+        self.w = 800
+        self.tile_w = (self.w - 100) // s
+        self.t_off = self.tile_w // 2
+        self.f = QtGui.QFont("Times", 25, QtGui.QFont.Bold)
+        self.display(self.grids.pop(0))
     def display_next(self):
         if self.grids:
             curr = self.grids.pop(0)
@@ -27,15 +28,21 @@ class MyScene(QtWidgets.QGraphicsScene):
         for y in range(self.s):
             for x in range(self.s):
                 if grid[x][y] != 0:
-                    self.addText("{}".format(grid[x][y])).setPos(y * 100, x * 100)
-                    self.addRect(y * 100, x * 100, 100, 100)
+                    t = self.addText("{}".format(grid[x][y]))
+                    t.setPos(y * self.tile_w + self.t_off, x * self.tile_w + self.t_off)
+                    t.setFont(self.f)
+                    r = QRectF(y * self.tile_w, x * self.tile_w, self.tile_w, self.tile_w)
+                    self.addRect(r)
 
 def display_all(s, grids):
+    if s > 10:
+        print ("this grid is too wide to be displayed")
+        sys.exit(0)
     grids = [np.asarray(g).reshape(s,s) for g in grids]
     app = QtWidgets.QApplication([])
     scene = MyScene(s, grids)
     view = QtWidgets.QGraphicsView(scene)
-    view.resize(800, 800)
+    view.resize(scene.w, scene.w)
     view.show()
     sys.exit(app.exec_())
         
