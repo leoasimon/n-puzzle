@@ -9,7 +9,7 @@ from unittest import TestCase
 from unittest.mock import patch
 import unittest as ut
 sys.path.insert(0, join(getcwd(), "../"))
-from parser import parsefile
+from parsing import parsefile
 import numpy as np
 
 from heuristics import get_manhattan, get_linear_conflicts, get_misplaced_tiles

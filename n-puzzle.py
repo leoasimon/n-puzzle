@@ -1,11 +1,12 @@
 #! /usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import sys
 import re
 
 import cProfile
 
-from parser import parse
+from parsing import parse
 from a_star import solve
 from gui import display_all
 

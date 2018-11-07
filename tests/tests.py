@@ -8,7 +8,7 @@ import subprocess
 from unittest import TestCase, TestSuite, TextTestRunner
 from unittest.mock import patch
 sys.path.insert(0, join(getcwd(), "../"))
-from parser import parsefile, PuzzleProblem
+from parsing import parsefile, PuzzleProblem
 
 dir_path = dirname(realpath(__file__))
 p_path = join(dir_path, "../n-puzzle.py")

@@ -9,7 +9,6 @@ from unittest import TestCase
 from unittest.mock import patch
 import unittest as ut
 sys.path.insert(0, join(getcwd(), "../"))
-from parser import parsefile
 import numpy as np
 
 from solvable import _get_inversions, get_solvable
