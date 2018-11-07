@@ -12,7 +12,7 @@ sys.path.insert(0, join(getcwd(), "../"))
 from parser import parsefile
 import numpy as np
 
-from heuristics import get_manhattan, get_linear_conflicts
+from heuristics import get_manhattan, get_linear_conflicts, get_misplaced_tiles
 from goal import get_goal_dict, make_goal
 
 dir_path = dirname(realpath(__file__))
@@ -85,7 +85,48 @@ class LinearC(TestCase):
 		g = np.array([[7,2,3],[8,0,4],[1,5,6]])
 		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)
 		self.assertEqual(6, lc, f'{bcolors.FAIL} wrong lc score {bcolors.ENDC}')
+
+class MisplacedT(TestCase):
+	def setUp(self):
+		self.size = 4
+		self.goal = make_goal(self.size)
 	
+	def test_misplaced_all_good(self):
+		g = self.goal
+		mt = get_misplaced_tiles(g, self.goal)
+		self.assertEqual(0, mt, f'{bcolors.FAIL} wrong mt score {bcolors.ENDC}')
+	
+	def test_misplaced_all_messed(self):
+		g = np.array([
+			[15,14,13,12],
+			[4,3,2,11],
+			[5,0,1,10],
+			[6,8,7,9],
+		])
+		mt = get_misplaced_tiles(g, self.goal)
+		self.assertEqual(15, mt, f'{bcolors.FAIL} wrong mt score {bcolors.ENDC}')
+	
+	def test_misplaced_two(self):
+		g = np.array([
+			[1,2,3,4],
+			[12,13,14,5],
+			[11,9,15,6],
+			[10,0,8,7],
+		])
+		mt = get_misplaced_tiles(g, self.goal)
+		self.assertEqual(1, mt, f'{bcolors.FAIL} wrong mt score {bcolors.ENDC}')
+	
+	def test_misplaced_five(self):
+		g = np.array([
+			[3,2,1,4],
+			[12,13,14,5],
+			[11,9,15,7],
+			[10,0,8,6],
+		])
+		mt = get_misplaced_tiles(g, self.goal)
+		self.assertEqual(5, mt, f'{bcolors.FAIL} wrong mt score {bcolors.ENDC}')
+
+
 if __name__ == '__main__':
 	if '-v' not in sys.argv:
 		print(f'{bcolors.OKBLUE} Recommended usage: ./heuristics.py -v {bcolors.ENDC}')

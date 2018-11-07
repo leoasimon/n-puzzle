@@ -52,6 +52,12 @@ def get_pattern_cost(grid, size):
 		diff += db[key] if key in db else 0
 	return diff
 
+def get_misplaced_tiles(grid, goal):
+	filtered = np.where(grid != goal)
+	if np.where(grid == 0) != np.where(goal == 0):
+		return len(filtered[0]) - 1
+	return len(filtered[0])
+
 def get_manhattan_plus_linear_conflict(grid, goal, goal_dict, size):
 	#TODO: Broken :)
 	diff = 0
@@ -80,7 +86,9 @@ def get_manhattan(grid, goal, goal_dict, size):
 	return diff
 
 def get_h_score(grid, goal, goal_dict, size, options):
-	if "db" in options:
+	if "mt" in options:
+		return get_misplaced_tiles(grid, goal)
+	elif "db" in options:
 		return get_pattern_cost(grid, size)
 	elif "lc" in options:
 		m = get_manhattan(grid, goal, goal_dict, size)
