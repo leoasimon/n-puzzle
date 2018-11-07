@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-O_FILE=cprof_output_$(date +%Y-%m-%d_at_%Hh%M).cprof
+O_FILE=cprof_output_$(date +%Y-%m-%d_at_%Hh%Ms%S).cprof
 
 if [[ -f $1 ]]; then
 	if [[ $2 ]]; then
