@@ -9,11 +9,10 @@ from unittest import TestCase
 from unittest.mock import patch
 import unittest as ut
 sys.path.insert(0, join(getcwd(), "../"))
-from parsing import parsefile
+
 import numpy as np
 
 from heuristics import get_manhattan, get_linear_conflicts, get_misplaced_tiles
-from goal import get_goal_dict, make_goal
 
 dir_path = dirname(realpath(__file__))
 p_path = join(dir_path, "../n-puzzle.py")
@@ -31,35 +30,32 @@ class bcolors:
 class Manhattan(TestCase):
 	def setUp(self):
 		self.size = 3
-		self.goal = make_goal(self.size)
-		self.goal_dict = get_goal_dict(self.goal, self.size)
+		self.goal = np.array([[1,2,3],[8,0,4],[7,6,5]])
+		self.goal_dict = {'1': (0, 0), '2': (1, 0), '3': (2, 0), '8': (0, 1), '0': (1, 1), '4': (2, 1), '7': (0, 2), '6': (1, 2), '5': (2, 2)}
 
 	def tearDown(self):
 		pass
 
 	def test_manhattan_solved_is_0(self):
-		f_solved = join(getcwd(), "puzzles/valids/solved_3x3")
-		solved_grid, _, _ = parsefile(f_solved)
-		h = get_manhattan(solved_grid, self.goal, self.goal_dict, self.size)
+		g = self.goal
+		h = get_manhattan(g, self.goal, self.goal_dict, self.size)
 		self.assertEqual(0, h)
 
 	def test_manhattan_easiest_is_1(self):
-		f_easy = join(getcwd(), "puzzles/valids/easiest_3x3.1")
-		easy_grid, _, _ = parsefile(f_easy)
-		h = get_manhattan(easy_grid, self.goal, self.goal_dict, self.size)
+		g = np.array([[1,2,3],[8,4,0],[7,6,5]])
+		h = get_manhattan(g, self.goal, self.goal_dict, self.size)
 		self.assertEqual(1, h)
 
 	def test_manhattan_hardest_equals_24(self):
-		f = join(getcwd(), "puzzles/valids/hardest_3x3")
-		grid, _, _ = parsefile(f)
-		h = get_manhattan(grid, self.goal, self.goal_dict, self.size)
+		g = np.array([[5,6,7],[4,0,8],[3,2,1]])
+		h = get_manhattan(g, self.goal, self.goal_dict, self.size)
 		self.assertEqual(24, h, f'{bcolors.FAIL} wrong h score for hardest_3x3 {bcolors.ENDC}')
 
 class LinearC(TestCase):
 	def setUp(self):
 		self.size = 3
-		self.goal = make_goal(self.size)
-		self.goal_dict = get_goal_dict(self.goal, self.size)
+		self.goal = np.array([[1,2,3],[8,0,4],[7,6,5]])
+		self.goal_dict = {'1': (0, 0), '2': (1, 0), '3': (2, 0), '8': (0, 1), '0': (1, 1), '4': (2, 1), '7': (0, 2), '6': (1, 2), '5': (2, 2)}
 	
 	def test_linear_conflicts_row(self):
 		g = np.array([[3,1,2],[8,0,4],[7,6,5]])
@@ -89,7 +85,7 @@ class LinearC(TestCase):
 class MisplacedT(TestCase):
 	def setUp(self):
 		self.size = 4
-		self.goal = make_goal(self.size)
+		self.goal = np.array([[1,2,3,4],[12,13,14,5],[11,0,15,6],[10,9,8,7]])
 	
 	def test_misplaced_all_good(self):
 		g = self.goal
