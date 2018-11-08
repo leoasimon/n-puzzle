@@ -4,7 +4,7 @@ from goal import make_goal, get_goal_dict
 import numpy as np
 import heapq
 
-def get_goal(size) -> np.matrix:
+def get_goal(size):
 	return make_goal(size)
 
 def get_empty_coords(grid):
@@ -49,27 +49,44 @@ def solve(a, size, options):
 
 	heapq.heappush(opensq, (f_scores[a_str], a_str, a))
 
+	max_opens = 1
+	total_opens = 1
+	times_updated_g_score = 0
+
 	i = 1
 	while len(opensq):
 		_, curr_str, curr = heapq.heappop(opensq)
 		neighbors = get_neighbors(curr, size)
 		g = g_scores[curr_str] + 1 if "greedy" not in options else 0
+		max_opens = max(len(opensq), max_opens)
+		# print(f'{curr} .... {f_scores[curr_str]} [turn: {i}]\n')
 
+		adding = len(neighbors)
 		for n in neighbors:
 			n_str = tuple(n.flatten())
 			if n_str == goal_str:
 				parents[n_str] = curr_str
+				print(f'max_opens : {max_opens}')
+				print(f'times_updated_g_score : {times_updated_g_score}')
+				print(f'total_opens : {total_opens}')
 				print(f'Found solution with {g if "greedy" not in options else i} moves.')
 				return print_solution(n_str, parents, 0)
 
-			if n_str not in g_scores:
+			if n_str not in g_scores: # O(1)
 				h = get_h_score(n, goal, goal_dict, size, options)
 				f_scores[n_str] = h + g
-			elif g < g_scores[n_str]:
+			elif g < g_scores[n_str]: #O(1)
+				times_updated_g_score += 1
+				# print(f'updating g score')
 				f_scores[n_str] -= g_scores[n_str] - g
 			else:
+				adding -= 1
 				continue
 			parents[n_str] = curr_str
 			g_scores[n_str] = g
-			heapq.heappush(opensq, (f_scores[n_str], n_str, n))
+			heapq.heappush(opensq, (f_scores[n_str], n_str, n)) # O(log n)
+			total_opens += 1
+		# print(f'---------- added {adding}; total: {len(opensq)}')
 		i += 1
+
+	
