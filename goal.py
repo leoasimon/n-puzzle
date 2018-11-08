@@ -19,10 +19,19 @@ def make_goal(size):
 	grid = np.zeros((size, size), dtype=np.uint8)
 	return _get_sides(grid, size, maxval)
 
-# return: dict of tuples representing (x, y) of each goal grid value
 def get_goal_dict(goal, size):
 	goal_dict = {}
 	for y in range(size):
 		for x in range(size):
 			goal_dict[str(goal[y, x])] = (x, y)
 	return goal_dict
+
+
+class Goal():
+	def __init__(self, size):
+		self.state = make_goal(size)
+		self.idx_dict = get_goal_dict(self.state, size)
+		self.str = str(tuple(self.state.flatten()))
+
+	def __str__(self):
+		return str(tuple(self.state.flatten()))
