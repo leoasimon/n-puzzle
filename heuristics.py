@@ -92,5 +92,7 @@ def get_h_score(grid, goal, goal_dict, size, options):
 		return m + get_linear_conflicts(grid, goal, goal_dict, size)
 	elif "lcm" in options:
 		return get_manhattan_plus_linear_conflict(grid, goal, goal_dict, size)
+	elif "mh" in options:
+		return get_manhattan(grid, goal, goal_dict, size)
 	else:
 		return get_manhattan(grid, goal, goal_dict, size)
