@@ -1,20 +1,34 @@
 #!/usr/bin/env bash
 
-O_FILE=cprof_output_$(date +%Y-%m-%d_at_%Hh%Ms%S).cprof
+interpreter="python3"
+alg="-mh"
+file=''
+
+usage(){
+	echo "Usage: $0 puzzlefile [algorithm] [-pypy3]"
+	exit 1
+}
 
 if [[ -f $1 ]]; then
-	if [[ $2 ]]; then
-		python3 -m cProfile -s cumtime -o $O_FILE ../n-puzzle.py $1 $2
-		snakeviz $O_FILE
-	elif [[ $3 == "--pypy3" ]]; then
-		pypy3 -m cProfile -s cumtime -o $O_FILE ../n-puzzle.py $1 $2
-		snakeviz $O_FILE
-	else
-		python3 -m cProfile -s cumtime -o $O_FILE ../n-puzzle.py $1
-		snakeviz $O_FILE
-	fi
-elif [[ $1 == "-d" ]]; then
-	rm -f *.cprof
+	fullfile=$1
+	file=$(basename -- "$1")
 else
-	printf "$1 is not a file."
+	usage
+	exit 1
 fi
+
+while test $# != 0
+do
+    case "$1" in
+    -pypy3) interpreter="pypy3" ;;
+    -mh|-lc|-greedy)
+        alg="$1"; shift ;;
+    --) shift; break;;
+    esac
+    shift
+done
+
+o_file=cprof_${file}_alg${alg}_intperpreter-${interpreter}_$(date +%Y-%m-%d_at_%Hh%Ms%S).cprof
+
+$interpreter -m cProfile -s cumtime -o $o_file ../n-puzzle.py $fullfile $alg
+snakeviz $o_file
