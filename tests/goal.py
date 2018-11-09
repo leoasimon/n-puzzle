@@ -17,6 +17,7 @@ dir_path = dirname(realpath(__file__))
 p_path = join(dir_path, "../n-puzzle.py")
 
 def fold(grid, l, size, off=0):
+	"""Utility to reshape a 1D array into spiral sq matrix"""
 	if not len(l):
 		return grid
 	if grid[off, off] > -1: # move inward
@@ -31,6 +32,7 @@ def fold(grid, l, size, off=0):
 	return fold(np.rot90(grid), l[size-1:], size, off)
 
 def unfold(grid, size):
+	"""Utility to reshape/reorder a spiral sq matrix to 1D array"""
 	if grid.size == 1:
 		return [grid[0, 0]]
 	top = grid[0].tolist()

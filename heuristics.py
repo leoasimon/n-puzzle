@@ -28,7 +28,8 @@ def get_lc_line(row, goal_row):
 	return sum([v - 1 for v in counts.values()]) + 1
 
 def get_linear_conflicts(grid, goal, goal_dict, size):
-	#Ugly and slow
+	#TODO: Needs non-numpy version
+	#TODO: Needs manhattan calc built in
 	diff = 0
 	for i in range(size):
 		col = grid[:,i]
@@ -41,6 +42,7 @@ def get_linear_conflicts(grid, goal, goal_dict, size):
 
 #Todo: store db somewhere so we don't have to open the file any times
 def get_pattern_cost(grid, size):
+	#TODO: non-numpy
 	diff = 0
 	goals = get_goals(size)
 	for g, name in zip(goals, ['a', 'b', 'c']):
@@ -52,34 +54,20 @@ def get_pattern_cost(grid, size):
 	return diff
 
 def get_misplaced_tiles(grid, goal):
+	#TODO: non-numpy
 	filtered = np.where(grid != goal)
 	if np.where(grid == 0) != np.where(goal == 0):
 		return len(filtered[0]) - 1
 	return len(filtered[0])
 
-def get_manhattan_plus_linear_conflict(grid, goal, goal_dict, size):
-	#TODO: Broken :)
-	diff = 0
-	m = 0
-	for i in range(size):
-		col = grid[:,i]
-		row = grid[i,:]
-		goal_col = goal[:,i]
-		goal_row = goal[i,:]
-		diff += get_lc_line(list(row), list(goal_row))
-		diff += get_lc_line(list(col), list(goal_col))
-		#TODO: Manhattan.
-	return diff + m # * 2? TODO
-
 def get_manhattan(grid, goal, goal_dict, size):
+	"""Get manhattan cost (with/without numpy)"""
 	diff = 0
-
 	for y in range(size):
 		for x, val in enumerate(grid[y]):
 			if val:
 				goal_pos_x, goal_pos_y = goal_dict[str(val)]
 				diff += abs(x - goal_pos_x) + abs(y - goal_pos_y)
-	# print(f'diff : {diff}')
 	return diff
 
 def get_h_score(grid, goal, goal_dict, size, options):
@@ -88,10 +76,8 @@ def get_h_score(grid, goal, goal_dict, size, options):
 	elif "db" in options:
 		return get_pattern_cost(grid, size)
 	elif "lc" in options:
-		m = get_manhattan(grid, goal, goal_dict, size)
+		m = get_manhattan(grid, goal, goal_dict, size) #TODO: remove, should all be in lc function
 		return m + get_linear_conflicts(grid, goal, goal_dict, size)
-	elif "lcm" in options:
-		return get_manhattan_plus_linear_conflict(grid, goal, goal_dict, size)
 	elif "mh" in options:
 		return get_manhattan(grid, goal, goal_dict, size)
 	else:
