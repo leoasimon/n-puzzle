@@ -8,15 +8,16 @@ import cProfile
 
 from parsing import parse
 from a_star import solve
-# from gui import display_all
+from gui import display_all
 
 if __name__ == '__main__':
+	print(f'Using interpreter : {sys.executable}')
 	a, size, options = parse()
 	path = solve(a, size, options)
 	# for j, e in enumerate(path):
 	# 	print(f'move: {j}', end=' ')
 	# 	print(e)
-	# if "g" in options:
-	# 	display_all(size, path)
+	if "g" in options:
+		display_all(size, path)
 	sys.exit(0)
 	

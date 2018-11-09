@@ -1,3 +1,6 @@
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import sys
 
 def print_grid(grid):
@@ -8,7 +11,8 @@ def print_scores(o, f_scores):
 	for e in o:
 		print("score: {}".format(f_scores[e]))
 
-#Todo: move it in a more relevant file
+#TODO: move it in a more relevant file
+#TODO: Pass NodeList statistics so we can print memory/time usage
 def get_path(curr_str, parents, moves):
 	if curr_str is None:
 		return []

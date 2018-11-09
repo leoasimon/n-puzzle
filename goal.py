@@ -1,4 +1,5 @@
 #! /usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import numpy as np
 
@@ -34,4 +35,4 @@ class Goal():
 		self.str = str(tuple(self.state.flatten()))
 
 	def __str__(self):
-		return str(tuple(self.state.flatten()))
+		return self.str

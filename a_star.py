@@ -22,16 +22,21 @@ def get_neighbors(grid, size):
 	r = get_swap(grid, x, y, x - 1, y, size)
 	d = get_swap(grid, x, y, x, y - 1, size)
 	l = get_swap(grid, x, y, x + 1, y, size)
-	return [e for e in [u,r,d,l] if e is not None]
+	return [Node(e) for e in [u,r,d,l] if e is not None]
 
 class Node():
-	"""A convenient way of housing grid states"""
+	"""A convenient way of housing grid states
+	
+	But not necessarily fast..."""
 	def __init__(self, state):
 		self.state = state
 		self.str = str(tuple(self.state.flatten()))
 
 	def __str__(self):
-		return str(tuple(self.state.flatten())) # fastest stringifier so far...
+		return self.str
+
+	def __lt__(self, other):
+		return self.str < other.str
 
 
 class NodeList():
@@ -48,14 +53,14 @@ class NodeList():
 		self.moves = 0
 
 	def push_node(self, f_score, node):
-		heapq.heappush(self.opened, (f_score, str(node), node.state))
+		heapq.heappush(self.opened, (f_score, node))
 		self.total_open += 1
 
 	def pop_node(self):
-		_, _, state = heapq.heappop(self.opened)
+		_, node = heapq.heappop(self.opened)
 		self.max_open = max(self.max_open, len(self.opened))
 		self.total_popped += 1
-		return Node(state)
+		return node
 
 def solve(a, size, options):
 	a = Node(a)
@@ -82,7 +87,6 @@ def solve(a, size, options):
 		g = g_scores[curr.str] + 1 if "greedy" not in options else 0
 
 		for n in neighbors:
-			n = Node(n)
 			if n.str == goal.str:
 				parents[n.str] = curr.str
 				print(f'Found solution with {g if "greedy" not in options else opensq.total_popped} moves.')
