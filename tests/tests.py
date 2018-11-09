@@ -65,7 +65,7 @@ class Main(TestCase):
 		self.test_main()
 
 if __name__ == "__main__":
-	allargs = ["parser", "main", "large"]
+	allargs = ["parser", "main"]
 	args = [e for e in sys.argv if e in allargs]
 	args = allargs if len(args) == 0 else args
 
@@ -75,7 +75,7 @@ if __name__ == "__main__":
 		runner = TextTestRunner()
 		runner.run(suite)
 
-	if "large" in args:
+	if "large" in sys.argv:
 		large = Large()
 		large.test()
 	

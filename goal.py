@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+import sys
 import numpy as np
 
 def _get_sides(grid, n, maxval, v=1, x=0, y=0):
@@ -34,4 +35,4 @@ class Goal():
 		self.str = str(tuple(self.state.flatten()))
 
 	def __str__(self):
-		return str(tuple(self.state.flatten()))
+		return self.str

@@ -30,7 +30,7 @@ class bcolors:
 class Manhattan(TestCase):
 	def setUp(self):
 		self.size = 3
-		self.goal = np.array([[1,2,3],[8,0,4],[7,6,5]])
+		self.goal = [[1,2,3],[8,0,4],[7,6,5]]
 		self.goal_dict = {'1': (0, 0), '2': (1, 0), '3': (2, 0), '8': (0, 1), '0': (1, 1), '4': (2, 1), '7': (0, 2), '6': (1, 2), '5': (2, 2)}
 
 	def tearDown(self):
@@ -42,12 +42,12 @@ class Manhattan(TestCase):
 		self.assertEqual(0, h)
 
 	def test_manhattan_easiest_is_1(self):
-		g = np.array([[1,2,3],[8,4,0],[7,6,5]])
+		g = np.array([[1,2,3],[8,4,0],[7,6,5]]).tolist()
 		h = get_manhattan(g, self.goal, self.goal_dict, self.size)
 		self.assertEqual(1, h)
 
 	def test_manhattan_hardest_equals_24(self):
-		g = np.array([[5,6,7],[4,0,8],[3,2,1]])
+		g = np.array([[5,6,7],[4,0,8],[3,2,1]]).tolist()
 		h = get_manhattan(g, self.goal, self.goal_dict, self.size)
 		self.assertEqual(24, h, f'{bcolors.FAIL} wrong h score for hardest_3x3 {bcolors.ENDC}')
 

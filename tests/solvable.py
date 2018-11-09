@@ -33,27 +33,6 @@ def make_goal(size):
 	grid = np.zeros((size, size), dtype=np.uint8)
 	return _get_sides(grid, size, maxval)
 
-def fold(grid, l, size, off=0):
-	if not len(l):
-		return grid
-	if grid[off, off] > -1: # move inward
-		off += 1
-		size -= 2
-		if (size == 1):
-			grid[off, off] = l[0]
-			return grid
-		elif size == 0:
-			return grid
-	grid[off, off:off+size-1] = l[0:size-1]
-	return fold(np.rot90(grid), l[size-1:], size, off)
-
-def unfold(grid, size):
-	if grid.size == 1:
-		return [grid[0, 0]]
-	top = grid[0].tolist()
-	l = top + unfold(np.rot90(grid[1:]), size-1)
-	return l
-
 class bcolors:
     HEADER = '\033[95m'
     OKBLUE = '\033[94m'
