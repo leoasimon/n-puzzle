@@ -36,10 +36,13 @@ class Goal():
 		self.idx_dict = get_goal_dict(self.state, size)
 		self.tuple_2D = tuple(map(tuple, self.list))
 
-		self.str = str(tuple(self.state.flatten()))
+		# self.str = str(tuple(self.state.flatten()))
+		self.list_str = str(self.list)
+		self.str = self.list_str
 		print(f'self.tuple_1D : {self.tuple_1D}')
 		print(f'self.tuple_2D : {self.tuple_2D}')
 		print(f'self.str : {self.str}')
+		print(f'self.list_str : {self.list_str}')
 
 	def __str__(self):
 		return self.str

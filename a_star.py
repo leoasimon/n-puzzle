@@ -5,75 +5,59 @@ import numpy as np
 import heapq
 
 import sys
-from functools import reduce
+
+def get_empty_coords(grid, size):
+	for y in range(size):
+		for x in range(size):
+			if grid[y][x] == 0:
+				return (y, x)
+
+def get_swap(grid, ax, ay, bx, by, s):
+	if by == s or by < 0 or bx == s or bx < 0:
+		return None
+	lst = [[x for x in row] for row in grid]
+	tmp = lst[by][bx]
+	lst[ay][ax] = tmp
+	lst[by][bx] = 0
+	return lst
+
+def get_neighbors(grid, size):
+	y, x = get_empty_coords(grid, size)
+	u = get_swap(grid, x, y, x, y + 1, size)
+	r = get_swap(grid, x, y, x - 1, y, size)
+	d = get_swap(grid, x, y, x, y - 1, size)
+	l = get_swap(grid, x, y, x + 1, y, size)
+	return [e for e in [u,r,d,l] if e is not None]
 
 class Node():
-	"""A convenient way of housing grid states
-	
-	TODO: Replace with NoNumpyNode once heuristics working
-	or integrate"""
-	def __init__(self, state):
-		self.state = state
-		self.str = str(tuple(self.state.flatten()))
-
-	def __str__(self):
-		return self.str
-
-	def _get_empty_coords(self):
-		pos_empty = np.where(self.state == 0)
-		return tuple(z[0] for z in pos_empty) # note: returns y, x
-
-	def _get_swap(self, ax, ay, bx, by, s):
-		if by == s or by < 0 or bx == s or bx < 0:
-			return None
-		grid_copy = self.state.copy()
-		grid_copy[ay, ax] = self.state[by, bx]
-		grid_copy[by, bx] = 0
-		return grid_copy
-
-	def get_neighbors(self, size):
-		y, x = self._get_empty_coords()
-		u = self._get_swap(x, y, x, y + 1, size)
-		r = self._get_swap(x, y, x - 1, y, size)
-		d = self._get_swap(x, y, x, y - 1, size)
-		l = self._get_swap(x, y, x + 1, y, size)
-		return [Node(e) for e in [u,r,d,l] if e is not None]
-
-class NoNumpyNode():
 	"""NO NUMPY, but contains same props as np grid state."""
 	def __init__(self, state):
-		if isinstance(state, np.ndarray):
-			self.state = state.tolist()
-		elif isinstance(state, list):
-			self.state = state
-		self.str = str(reduce(lambda x,y: x+y, tuple(map(tuple, self.state))))
+		self.state = state #2d list
+		self.str = str(self.state)
 
-	def _get_empty_coords(self):
-		for i, row in enumerate(self.state):
-			for j, val in enumerate(row):
-				if val == 0:
-					return (i, j)
+	# def _get_empty_coords(self):
+	# 	for i, row in enumerate(self.state):
+	# 		for j, val in enumerate(row):
+	# 			if val == 0:
+	# 				return (i, j)
 
-	def _get_swap(self, ax, ay, bx, by, s):
-		"""Get valid neighboring moves"""
-		if by == s or by < 0 or bx == s or bx < 0:
-			return None
-		grid_copy = [row.copy() for row in self.state]
-		grid_copy[ay][ax] = self.state[by][bx]
-		grid_copy[by][bx] = 0
-		return grid_copy
+	# def _get_swap(self, ax, ay, bx, by, s):
+	# 	"""Get valid neighboring moves"""
+	# 	if by == s or by < 0 or bx == s or bx < 0:
+	# 		return None
+	# 	grid_copy = [[x for x in row] for row in self.state]
+	# 	grid_copy[ay][ax] = self.state[by][bx]
+	# 	grid_copy[by][bx] = 0
+	# 	return Node(grid_copy)
 
-	def get_neighbors(self, size):
-		"""Get valid neighboring moves"""
-		y, x = self._get_empty_coords()
-		u = self._get_swap(x, y, x, y + 1, size)
-		r = self._get_swap(x, y, x - 1, y, size)
-		d = self._get_swap(x, y, x, y - 1, size)
-		l = self._get_swap(x, y, x + 1, y, size)
-		return [NoNumpyNode(e) for e in [u,r,d,l] if e is not None]
-
-	def __str__(self):
-		return self.str
+	# def get_neighbors(self, size):
+	# 	"""Get valid neighboring moves"""
+	# 	y, x = self._get_empty_coords()
+	# 	u = self._get_swap(x, y, x, y + 1, size)
+	# 	r = self._get_swap(x, y, x - 1, y, size)
+	# 	d = self._get_swap(x, y, x, y - 1, size)
+	# 	l = self._get_swap(x, y, x + 1, y, size)
+	# 	return [e for e in [u,r,d,l] if e is not None]
 
 
 class NodeList():
@@ -90,19 +74,19 @@ class NodeList():
 		self.moves = 0
 
 	def push_node(self, f_score, node):
-		heapq.heappush(self.opened, (f_score, str(node), node.state))
+		heapq.heappush(self.opened, (f_score, node.str, node))
 		self.total_open += 1
 
 	def pop_node(self):
 		"""TODO: needs to return NoNumpyNode"""
-		_, _, state = heapq.heappop(self.opened)
+		_, _, node = heapq.heappop(self.opened)
 		self.max_open = max(self.max_open, len(self.opened))
 		self.total_popped += 1
-		return Node(state)
+		return node
 
 def solve(a, size, options):
 	# a = NoNumpyNode(a)
-	a = Node(a)
+	a = Node(a.tolist())
 	
 	goal = Goal(size)
 	opensq = NodeList()
@@ -123,10 +107,11 @@ def solve(a, size, options):
 
 	while len(opensq.opened):
 		curr = opensq.pop_node()
-		neighbors = curr.get_neighbors(size)
+		neighbors = get_neighbors(curr.state, size)
 		g = g_scores[curr.str] + 1 if "greedy" not in options else 0
 
 		for n in neighbors:
+			n = Node(n)
 			if n.str == goal.str:
 				parents[n.str] = curr.str
 				print(f'Found solution with {g if "greedy" not in options else opensq.total_popped} moves.')
