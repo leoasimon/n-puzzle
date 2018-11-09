@@ -5,6 +5,7 @@ import numpy as np
 import heapq
 
 import sys
+from functools import reduce
 
 class Node():
 	"""A convenient way of housing grid states
@@ -36,13 +37,16 @@ class Node():
 		r = self._get_swap(x, y, x - 1, y, size)
 		d = self._get_swap(x, y, x, y - 1, size)
 		l = self._get_swap(x, y, x + 1, y, size)
-		return [e for e in [u,r,d,l] if e is not None]
+		return [Node(e) for e in [u,r,d,l] if e is not None]
 
 class NoNumpyNode():
 	"""NO NUMPY, but contains same props as np grid state."""
 	def __init__(self, state):
-		self.state = state
-		self.str = str(tuple(map(tuple, state)))
+		if isinstance(state, np.ndarray):
+			self.state = state.tolist()
+		elif isinstance(state, list):
+			self.state = state
+		self.str = str(reduce(lambda x,y: x+y, tuple(map(tuple, self.state))))
 
 	def _get_empty_coords(self):
 		for i, row in enumerate(self.state):
@@ -66,7 +70,7 @@ class NoNumpyNode():
 		r = self._get_swap(x, y, x - 1, y, size)
 		d = self._get_swap(x, y, x, y - 1, size)
 		l = self._get_swap(x, y, x + 1, y, size)
-		return [e for e in [u,r,d,l] if e is not None]
+		return [NoNumpyNode(e) for e in [u,r,d,l] if e is not None]
 
 	def __str__(self):
 		return self.str
@@ -97,7 +101,9 @@ class NodeList():
 		return Node(state)
 
 def solve(a, size, options):
+	# a = NoNumpyNode(a)
 	a = Node(a)
+	
 	goal = Goal(size)
 	opensq = NodeList()
 
@@ -121,7 +127,6 @@ def solve(a, size, options):
 		g = g_scores[curr.str] + 1 if "greedy" not in options else 0
 
 		for n in neighbors:
-			n = Node(n)
 			if n.str == goal.str:
 				parents[n.str] = curr.str
 				print(f'Found solution with {g if "greedy" not in options else opensq.total_popped} moves.')

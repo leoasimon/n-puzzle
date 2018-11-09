@@ -16,7 +16,9 @@ if __name__ == '__main__':
 	# for j, e in enumerate(path):
 	# 	print(f'move: {j}', end=' ')
 	# 	print(e)
+	#TODO: Move this. Won't work with pypy
 	# if "g" in options:
 	# 	display_all(size, path)
+	#TODO: Save relevant info elsewhere to be used by separate visualizer script
 	sys.exit(0)
 	
