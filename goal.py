@@ -31,8 +31,15 @@ def get_goal_dict(goal, size):
 class Goal():
 	def __init__(self, size):
 		self.state = make_goal(size)
+		self.list = self.state.tolist()
+		self.tuple_1D = tuple(self.state.flatten())
 		self.idx_dict = get_goal_dict(self.state, size)
+		self.tuple_2D = tuple(map(tuple, self.list))
+
 		self.str = str(tuple(self.state.flatten()))
+		print(f'self.tuple_1D : {self.tuple_1D}')
+		print(f'self.tuple_2D : {self.tuple_2D}')
+		print(f'self.str : {self.str}')
 
 	def __str__(self):
 		return self.str
