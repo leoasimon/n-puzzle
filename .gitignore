@@ -4,3 +4,8 @@ __pycache__/
 test_*
 *.cprof
 *.json
+
+# All tests in root directory
+eight.*
+sixteen.*
+twentyfour.*
