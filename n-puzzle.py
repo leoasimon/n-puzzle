@@ -11,6 +11,7 @@ from a_star import solve
 # from gui import display_all
 
 if __name__ == '__main__':
+	print(f'Using interpreter : {sys.executable}')
 	a, size, options = parse()
 	path = solve(a, size, options)
 	# for j, e in enumerate(path):
