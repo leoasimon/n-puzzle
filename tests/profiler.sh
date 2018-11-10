@@ -3,15 +3,22 @@
 interpreter="python3"
 alg="-mh"
 file=''
+oflag='-o '
+o_file=''
+visualizer="snakeviz"
 
 usage(){
-	echo "Usage: $0 puzzlefile [algorithm] [-pypy3]"
+	printf "Usage: \n\t$0 puzzlefile [ -mh | -lc | other algo flag ] [-pypy3]\n\t$0 -d\n\n\t-d: deletes all .cprof files in this directory."
 	exit 1
 }
 
 if [[ -f $1 ]]; then
 	fullfile=$1
 	file=$(basename -- "$1")
+elif [[ $1 == "-d" ]]; then
+	rm -f *.cprof
+	printf "All profile output files removed."
+	exit 1
 else
 	usage
 	exit 1
@@ -30,5 +37,7 @@ done
 
 o_file=cprof_${file}_alg${alg}_intperpreter-${interpreter}_$(date +%Y-%m-%d_at_%Hh%Ms%S).cprof
 
-$interpreter -m cProfile -s cumtime -o $o_file ../n-puzzle.py $fullfile $alg
-snakeviz $o_file
+command -v $visualizer >/dev/null 2>&1 || { echo >&2 "You don't have snakeviz (pip3 install snakeviz); output will be printed to stdout instead."; o_file=''; oflag=''; visualizer=''; }
+
+$interpreter -m cProfile -s cumtime $oflag$o_file ../n-puzzle.py $fullfile $alg
+$visualizer $o_file
