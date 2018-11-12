@@ -62,7 +62,7 @@ class NodeList():
 		self.total_popped += 1
 		return node
 
-def solve(a, size, options):
+def solve(a, size, options, dbs):
 	a = Node(a)
 	goal = Goal(size)
 	opensq = NodeList()
@@ -73,7 +73,7 @@ def solve(a, size, options):
 
 	parents[a.str] = None
 	g_scores[a.str] = 0
-	f_scores[a.str] = get_h_score(a.state, goal.state, goal.idx_dict, size, options)
+	f_scores[a.str] = get_h_score(a.state, goal.state, goal.idx_dict, size, options, dbs)
 
 	if np.array_equal(a.state, goal.state):
 		print(f'Found solution with 0 moves.')
@@ -93,7 +93,7 @@ def solve(a, size, options):
 				return print_solution(n.str, parents, 0)
 
 			if n.str not in g_scores:
-				h = get_h_score(n.state, goal.state, goal.idx_dict, size, options)
+				h = get_h_score(n.state, goal.state, goal.idx_dict, size, options, dbs)
 				f_scores[n.str] = h + g
 			elif g < g_scores[n.str]:
 				f_scores[n.str] -= g_scores[n.str] - g

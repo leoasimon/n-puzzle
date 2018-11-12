@@ -43,14 +43,13 @@ def get_linear_conflicts(grid, goal, goal_dict, size):
 	return diff * 2
 
 #Todo: store db somewhere so we don't have to open the file any times
-def get_pattern_cost(grid, size):
+def get_pattern_cost(grid, size, dbs):
 	diff = 0
 	goals = get_goals(size)
-	for g, name in zip(goals, ['a', 'b', 'c']):
+	for g, db in zip(goals, dbs):
 		nums = [e for e in g.flatten() if e != -1]
 		filtered = np.where(g != 0, grid, -1)
 		key = build_key(filtered, nums)
-		db = get_db(size, name)
 		diff += db[key] if key in db else 0
 	return diff
 
@@ -85,11 +84,11 @@ def get_manhattan(grid, goal, goal_dict, size):
 	# print(f'diff : {diff}')
 	return diff
 
-def get_h_score(grid, goal, goal_dict, size, options):
+def get_h_score(grid, goal, goal_dict, size, options, dbs):
 	if "mt" in options:
 		return get_misplaced_tiles(grid, goal)
 	elif "db" in options:
-		return get_pattern_cost(grid, size)
+		return get_pattern_cost(grid, size, dbs)
 	elif "lc" in options:
 		m = get_manhattan(grid, goal, goal_dict, size)
 		return m + get_linear_conflicts(grid, goal, goal_dict, size)

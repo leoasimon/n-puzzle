@@ -3,9 +3,11 @@
 __pycache__/
 test_*
 *.cprof
-*.json
+.json
 
 # All tests in root directory
 eight.*
 sixteen.*
 twentyfour.*
+db_builder
+

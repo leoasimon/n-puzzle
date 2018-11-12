@@ -4,6 +4,11 @@ import numpy as np
 import json
 from bfs import bfs
 import sys
+import os
+
+def handle_error(msg):
+	print(msg, file=sys.stderr)
+	sys.exit(1)
 
 def save_json(db, s, n):
 	name = f'{s}x{s}_{n}.json'
@@ -13,8 +18,14 @@ def save_json(db, s, n):
 
 def get_db(s, n):
 	name = f'{s}x{s}_{n}.json'
-	with open(name, "r") as f:
-		return json.load(f)
+	path = os.path.join(os.path.abspath("dbs"), name)
+	try:
+		f = open(path, "r")
+		d = json.load(f)
+		f.close()
+		return d
+	except:
+		handle_error(f'No database available for {s*s - 1} puzzles')
 
 def get_goals(s):
 	with open("goals.json", "r") as f:
