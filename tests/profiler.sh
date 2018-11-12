@@ -28,7 +28,7 @@ while test $# != 0
 do
     case "$1" in
     -pypy3) interpreter="pypy3" ;;
-    -mh|-lc|-greedy)
+    -mh|-lc|-db|-mt)
         alg="$1"; shift ;;
     --) shift; break;;
     esac
