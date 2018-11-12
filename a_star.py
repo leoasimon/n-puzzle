@@ -33,33 +33,53 @@ class Node():
 	def __lt__(self, other):
 		return self.tup < other.tup
 
-class NodeList():
-	"""Contains opened queue and game statistics"""
+class Stats():
+	"""Contains solver statistics"""
 
-	def __init__(self):
-		self.opened = []
-
-		#TODO: Move stats?
-		self.size = 0
-		self.max_open = 0
-		self.total_open = 0
-		self.total_popped = 0
+	def __init__(self, size, options=[]):
+		self.size = size
+		self.options = options
+		self.max_open = 0 # max number of nodes in opened queue (space complexity)
+		self.total_open = 0 # how many times we added to opened queue (time complexity)
+		self.total_popped = 0 # how many nodes we (re-)evaluated
 		self.moves = 0
+
+	def increase_total_added(self):
+		self.total_open += 1
+
+	def update_max_open(self, other):
+		self.max_open = max(self.max_open, other)
+
+	def increase_total_popped(self):
+		self.total_popped += 1
+
+	def set_moves(self, num_moves=None):
+		if "greedy" in self.options:
+			self.moves = self.total_popped
+		else:
+			self.moves = num_moves
+
+class NodeList():
+	"""Contains opened queue"""
+
+	def __init__(self, size, options=[]):
+		self.opened = []
+		self.stats = Stats(size, options)
 
 	def push_node(self, f_score, node):
 		heapq.heappush(self.opened, (f_score, node))
-		self.total_open += 1
+		self.stats.increase_total_added()
+		self.stats.update_max_open(len(self.opened))
 
 	def pop_node(self):
-		_, node = heapq.heappop(self.opened)
-		self.max_open = max(self.max_open, len(self.opened))
-		self.total_popped += 1
+		node = heapq.heappop(self.opened)[1]
+		self.stats.increase_total_popped()
 		return node
 
 def solve(a, size, options, dbs):
 	a = Node(a)
 	goal = Goal(size)
-	opensq = NodeList()
+	opensq = NodeList(size, options)
 
 	g_scores = {}
 	f_scores = {}
@@ -70,8 +90,7 @@ def solve(a, size, options, dbs):
 	f_scores[a.tup] = get_h_score(a.state, goal.state, goal.idx_dict, size, options, dbs)
 
 	if np.array_equal(a.state, goal.state):
-		print(f'Found solution with 0 moves.')
-		return print_solution(a.tup, parents, 0)
+		return print_solution(opensq.stats, a.tup, parents, 0)
 
 	opensq.push_node(f_scores[a.tup], a)
 
@@ -83,8 +102,8 @@ def solve(a, size, options, dbs):
 		for n in neighbors:
 			if n.tup == goal.tup:
 				parents[n.tup] = curr.tup
-				print(f'Found solution with {g if "greedy" not in options else opensq.total_popped} moves.')
-				return print_solution(n.tup, parents, 0)
+				opensq.stats.set_moves(g)
+				return print_solution(opensq.stats, n.tup, parents, 0)
 
 			if n.tup not in g_scores:
 				h = get_h_score(n.state, goal.state, goal.idx_dict, size, options, dbs)
