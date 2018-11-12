@@ -32,7 +32,4 @@ class Goal():
 	def __init__(self, size):
 		self.state = make_goal(size)
 		self.idx_dict = get_goal_dict(self.state, size)
-		self.str = str(tuple(self.state.flatten()))
-
-	def __str__(self):
-		return self.str
+		self.tup = tuple(self.state.flatten())

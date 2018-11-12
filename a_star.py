@@ -25,19 +25,13 @@ def get_neighbors(grid, size):
 	return [Node(e) for e in [u,r,d,l] if e is not None]
 
 class Node():
-	"""A convenient way of housing grid states
-	
-	But not necessarily fast..."""
+	"""A convenient way of housing grid states"""
 	def __init__(self, state):
 		self.state = state
-		self.str = str(tuple(self.state.flatten()))
-
-	def __str__(self):
-		return self.str
+		self.tup = tuple(self.state.flatten())
 
 	def __lt__(self, other):
-		return self.str < other.str
-
+		return self.tup < other.tup
 
 class NodeList():
 	"""Contains opened queue and game statistics"""
@@ -71,36 +65,36 @@ def solve(a, size, options, dbs):
 	f_scores = {}
 	parents = {}
 
-	parents[a.str] = None
-	g_scores[a.str] = 0
-	f_scores[a.str] = get_h_score(a.state, goal.state, goal.idx_dict, size, options, dbs)
+	parents[a.tup] = None
+	g_scores[a.tup] = 0
+	f_scores[a.tup] = get_h_score(a.state, goal.state, goal.idx_dict, size, options, dbs)
 
 	if np.array_equal(a.state, goal.state):
 		print(f'Found solution with 0 moves.')
-		return print_solution(a.str, parents, 0)
+		return print_solution(a.tup, parents, 0)
 
-	opensq.push_node(f_scores[a.str], a)
+	opensq.push_node(f_scores[a.tup], a)
 
 	while len(opensq.opened):
 		curr = opensq.pop_node()
 		neighbors = get_neighbors(curr.state, size)
-		g = g_scores[curr.str] + 1 if "greedy" not in options else 0
+		g = g_scores[curr.tup] + 1 if "greedy" not in options else 0
 
 		for n in neighbors:
-			if n.str == goal.str:
-				parents[n.str] = curr.str
+			if n.tup == goal.tup:
+				parents[n.tup] = curr.tup
 				print(f'Found solution with {g if "greedy" not in options else opensq.total_popped} moves.')
-				return print_solution(n.str, parents, 0)
+				return print_solution(n.tup, parents, 0)
 
-			if n.str not in g_scores:
+			if n.tup not in g_scores:
 				h = get_h_score(n.state, goal.state, goal.idx_dict, size, options, dbs)
-				f_scores[n.str] = h + g
-			elif g < g_scores[n.str]:
-				f_scores[n.str] -= g_scores[n.str] - g
+				f_scores[n.tup] = h + g
+			elif g < g_scores[n.tup]:
+				f_scores[n.tup] -= g_scores[n.tup] - g
 			else:
 				continue
-			parents[n.str] = curr.str
-			g_scores[n.str] = g
-			opensq.push_node(f_scores[n.str], n)
+			parents[n.tup] = curr.tup
+			g_scores[n.tup] = g
+			opensq.push_node(f_scores[n.tup], n)
 
 	
