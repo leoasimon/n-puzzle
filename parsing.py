@@ -61,11 +61,12 @@ def parse():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("name", nargs="?", help="Name of the file to open")
 	parser.add_argument("-g", "--gui", action="store_true", help="Display the solution in a gui window")
+	parser.add_argument("-v", "--verbose", action="store_true", help="Display the different states of the solution")
 
 	heuristics = ["lc","mh","db","mt"]
 	parser.add_argument("-he", "--heuristic", default="mh", choices=heuristics, help="choose a heuristic function")
 
-	parser.add_argument("-a", "--algorithm", default="a_star", choices=["a_star", "greedy"])
+	parser.add_argument("-a", "--algorithm", default="astar", choices=["astar", "greedy"])
 
 	args = parser.parse_args()
 	#try open file
