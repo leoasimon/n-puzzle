@@ -114,10 +114,10 @@ def solve(a, size, options, dbs):
 	g_scores[a.tup] = 0
 	f_scores[a.tup] = get_h_score(a.state, goal.state, goal.idx_dict, size, options, dbs)
 
+	search.push_node(f_scores[a.tup], a)
+
 	if np.array_equal(a.state, goal.state):
 		return print_solution(search.stats, a.tup, parents, 0)
-
-	search.push_node(f_scores[a.tup], a)
 
 	while len(search.opened):
 		curr = search.pop_node()

@@ -17,7 +17,10 @@ def print_solution(stats, n_str, parents, i):
 	print(f'Search type: {stats.algo}')
 	print(f'Found solution in {stats.moves} moves.')
 	print(f'Total number added to open set (time complexity):  {stats.total_open}')
-	print(f'Max nodes in memory (space complexity):  {stats.max_open}') #TODO: Consider DB, dicts, etc?
+	print(
+		f'Max nodes in memory (space complexity):  {stats.max_open} '
+		f'(plus {len(parents) * 3})' # For g_score, f_score, and parents dicts
+	) #TODO: DB?
 
 	#TODO: Print path
 	return l
