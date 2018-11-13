@@ -15,7 +15,6 @@ def get_dbs(s):
 	return [get_db(size, name) for name in ['a', 'b', 'c']]
 
 if __name__ == '__main__':
-	print(f'Using interpreter : {sys.executable}')
 	a, size, options = parse()
 	dbs = get_dbs(size) if options.heuristic == 'db' else []
 	path = solve(a, size, options, dbs)
