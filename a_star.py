@@ -4,28 +4,6 @@ from goal import Goal
 import numpy as np
 import heapq
 
-#TODO: Move to parser/use Argparse
-def get_algo(options):
-	if "greedy" in options:
-		return "greedy"
-	elif "uniform" in options:
-		return "uniform" #TODO: Remove if we don't do this
-	else:
-		return "astar"
-
-#TODO: Move to parser/use Argparse
-def get_heuristic(options):
-	if "lc" in options:
-		return "linear conflict"
-	elif "db" in options:
-		return "pattern database"
-	elif "mt" in options:
-		return "misplaced tiles"
-	elif "mh" in options:
-		return "manhattan distance"
-	else:
-		return "manhattan distance"
-
 def get_empty_coords(grid):
 	pos_empty = np.where(grid == 0)
 	return tuple(z[0] for z in pos_empty) # note: returns y, x
@@ -85,10 +63,16 @@ class Stats():
 class Search():
 	"""Contains opened queue"""
 
-	def __init__(self, size, options=[]):
+	def __init__(self, size, options={}):
 		self.opened = []
-		self.algo = get_algo(options)
-		self.heuristic = get_heuristic(options)
+		self.algo = options.algorithm
+		self.labels = {
+			"lc": "Manhattan distance + linear conflict",
+			"mh": "Manhattan distance",
+			"mt": "Misplaced tiles",
+			"db": "Pattern database",
+		}
+		self.heuristic = self.labels[options.heuristic]
 		self.stats = Stats(size, self.algo, self.heuristic)
 
 	def push_node(self, f_score, node):

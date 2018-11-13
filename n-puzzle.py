@@ -17,12 +17,12 @@ def get_dbs(s):
 if __name__ == '__main__':
 	print(f'Using interpreter : {sys.executable}')
 	a, size, options = parse()
-	dbs = get_dbs(size) if "db" in options else []
+	dbs = get_dbs(size) if options.heuristic == 'db' else []
 	path = solve(a, size, options, dbs)
 	# for j, e in enumerate(path):
 	# 	print(f'move: {j}', end=' ')
 	# 	print(e)
-	if "g" in options:
+	if options.gui:
 		display_all(size, path)
 	sys.exit(0)
 	

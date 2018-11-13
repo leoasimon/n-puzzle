@@ -4,6 +4,7 @@
 import sys
 import numpy as np
 from solvable import get_solvable
+import argparse
 
 class PuzzleProblem(Exception):
 	pass
@@ -24,7 +25,7 @@ def secured_open(filename):
 		raise PuzzleProblem(f'No file {filename}')
 
 # return: tuple(2D array, int, options[])
-def checked(puzzle, size, options=[]):
+def checked(puzzle, size, options={}):
 	if size > 10:
 		raise PuzzleProblem("That puzzle is too big for me.")
 	if not all(len(y) == len(puzzle) == size for y in puzzle):
@@ -49,22 +50,28 @@ def file_to_lines(fd):
 
 # params: filename, options[]
 # return tuple(2D array, int, [options])
-def parsefile(name, options=[]):
+def parsefile(name, options={}):
 	f = secured_open(name)
 	size, puzzle = file_to_lines(f)
 	f.close()
 	return checked(np.array(puzzle, dtype=np.uint8), size, options)
 	
-
 # return tuple(2D array, int, [options])
 def parse():
+	parser = argparse.ArgumentParser()
+	parser.add_argument("name", nargs="?", help="Name of the file to open")
+	parser.add_argument("-g", "--gui", action="store_true", help="Display the solution in a gui window")
+
+	heuristics = ["lc","mh","db","mt"]
+	parser.add_argument("-he", "--heuristic", default="mh", choices=heuristics, help="choose a heuristic function")
+
+	parser.add_argument("-a", "--algorithm", default="a_star", choices=["a_star", "greedy"])
+
+	args = parser.parse_args()
 	#try open file
-	args = sys.argv[1:] if len(sys.argv) >= 2 else []
-	options = [e.replace("-", "") for e in args if e[0] == '-']
-	names = [e for e in args if e[0] != '-']
-	if names:
+	if args.name:
 		try:
-			return parsefile(names[0], options)
+			return parsefile(args.name, args)
 		except PuzzleProblem as pp:
 			sys.exit(f'\033[91m{str(pp)}\033[0m')
 	else:
@@ -72,4 +79,4 @@ def parse():
 		size = int(lines.pop(0)[0])
 
 		lines = [get_int_lst(l) for l in lines]
-		return (np.array(lines, dtype=np.uint8), size, options)
+		return (np.array(lines, dtype=np.uint8), size, args)

@@ -85,16 +85,15 @@ def get_manhattan(grid, goal, goal_dict, size):
 	return diff
 
 def get_h_score(grid, goal, goal_dict, size, options, dbs):
-	if "mt" in options:
+	if options.heuristic == 'mt':
 		return get_misplaced_tiles(grid, goal)
-	elif "db" in options:
+	if options.heuristic == 'db':
 		return get_pattern_cost(grid, size, dbs)
-	elif "lc" in options:
+	if options.heuristic == 'lc':
 		m = get_manhattan(grid, goal, goal_dict, size)
 		return m + get_linear_conflicts(grid, goal, goal_dict, size)
-	elif "lcm" in options:
+	#Todo: merge
+	if options.heuristic == 'lc':
 		return get_manhattan_plus_linear_conflict(grid, goal, goal_dict, size)
-	elif "mh" in options:
-		return get_manhattan(grid, goal, goal_dict, size)
-	else:
+	if options.heuristic == 'mh':
 		return get_manhattan(grid, goal, goal_dict, size)
