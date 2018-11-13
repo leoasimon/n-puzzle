@@ -69,15 +69,18 @@ def parse():
 	parser.add_argument("-a", "--algorithm", default="astar", choices=["astar", "greedy"])
 
 	args = parser.parse_args()
-	#try open file
+
 	if args.name:
 		try:
 			return parsefile(args.name, args)
 		except PuzzleProblem as pp:
 			sys.exit(f'\033[91m{str(pp)}\033[0m')
 	else:
+		# TODO: Add'l tests
 		lines = [l.split() for l in sys.stdin if l[0] != "#"]
 		size = int(lines.pop(0)[0])
-
 		lines = [get_int_lst(l) for l in lines]
-		return (np.array(lines, dtype=np.uint8), size, args)
+		try:
+			return checked(np.array(lines, dtype=np.uint8), size, args)
+		except PuzzleProblem as pp:
+			sys.exit(f'\033[91m{str(pp)}\033[0m')
