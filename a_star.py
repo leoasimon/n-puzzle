@@ -4,6 +4,28 @@ from goal import Goal
 import numpy as np
 import heapq
 
+#TODO: Move to parser/use Argparse
+def get_algo(options):
+	if "greedy" in options:
+		return "greedy"
+	elif "uniform" in options:
+		return "uniform" #TODO: Remove if we don't do this
+	else:
+		return "astar"
+
+#TODO: Move to parser/use Argparse
+def get_heuristic(options):
+	if "lc" in options:
+		return "linear conflict"
+	elif "db" in options:
+		return "pattern database"
+	elif "mt" in options:
+		return "misplaced tiles"
+	elif "mh" in options:
+		return "manhattan distance"
+	else:
+		return "manhattan distance"
+
 def get_empty_coords(grid):
 	pos_empty = np.where(grid == 0)
 	return tuple(z[0] for z in pos_empty) # note: returns y, x
@@ -36,9 +58,10 @@ class Node():
 class Stats():
 	"""Contains solver statistics"""
 
-	def __init__(self, size, options=[]):
+	def __init__(self, size, algo="astar", heuristic="manhattan"):
 		self.size = size
-		self.options = options
+		self.algo = algo
+		self.heuristic = heuristic
 		self.max_open = 0 # max number of nodes in opened queue (space complexity)
 		self.total_open = 0 # how many times we added to opened queue (time complexity)
 		self.total_popped = 0 # how many nodes we (re-)evaluated
@@ -54,17 +77,19 @@ class Stats():
 		self.total_popped += 1
 
 	def set_moves(self, num_moves=None):
-		if "greedy" in self.options:
+		if self.algo == "greedy":
 			self.moves = self.total_popped
 		else:
 			self.moves = num_moves
 
-class NodeList():
+class Search():
 	"""Contains opened queue"""
 
 	def __init__(self, size, options=[]):
 		self.opened = []
-		self.stats = Stats(size, options)
+		self.algo = get_algo(options)
+		self.heuristic = get_heuristic(options)
+		self.stats = Stats(size, self.algo, self.heuristic)
 
 	def push_node(self, f_score, node):
 		heapq.heappush(self.opened, (f_score, node))
@@ -79,7 +104,7 @@ class NodeList():
 def solve(a, size, options, dbs):
 	a = Node(a)
 	goal = Goal(size)
-	opensq = NodeList(size, options)
+	search = Search(size, options)
 
 	g_scores = {}
 	f_scores = {}
@@ -90,20 +115,20 @@ def solve(a, size, options, dbs):
 	f_scores[a.tup] = get_h_score(a.state, goal.state, goal.idx_dict, size, options, dbs)
 
 	if np.array_equal(a.state, goal.state):
-		return print_solution(opensq.stats, a.tup, parents, 0)
+		return print_solution(search.stats, a.tup, parents, 0)
 
-	opensq.push_node(f_scores[a.tup], a)
+	search.push_node(f_scores[a.tup], a)
 
-	while len(opensq.opened):
-		curr = opensq.pop_node()
+	while len(search.opened):
+		curr = search.pop_node()
 		neighbors = get_neighbors(curr.state, size)
-		g = g_scores[curr.tup] + 1 if "greedy" not in options else 0
+		g = g_scores[curr.tup] + 1 if search.algo == "astar" else 0
 
 		for n in neighbors:
 			if n.tup == goal.tup:
 				parents[n.tup] = curr.tup
-				opensq.stats.set_moves(g)
-				return print_solution(opensq.stats, n.tup, parents, 0)
+				search.stats.set_moves(g)
+				return print_solution(search.stats, n.tup, parents, 0)
 
 			if n.tup not in g_scores:
 				h = get_h_score(n.state, goal.state, goal.idx_dict, size, options, dbs)
@@ -114,6 +139,6 @@ def solve(a, size, options, dbs):
 				continue
 			parents[n.tup] = curr.tup
 			g_scores[n.tup] = g
-			opensq.push_node(f_scores[n.tup], n)
+			search.push_node(f_scores[n.tup], n)
 
 	
