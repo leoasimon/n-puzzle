@@ -59,27 +59,27 @@ class LinearC(TestCase):
 	
 	def test_linear_conflicts_row(self):
 		g = np.array([[3,1,2],[8,0,4],[7,6,5]])
-		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)
+		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)[1]
 		self.assertEqual(2, lc, f'{bcolors.FAIL} wrong lc score {bcolors.ENDC}')
 	
 	def test_linear_conflicts_col(self):
 		g = np.array([[8,2,3],[1,0,4],[7,6,5]])
-		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)
+		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)[1]
 		self.assertEqual(2, lc, f'{bcolors.FAIL} wrong lc score {bcolors.ENDC}')
 	
 	def test_linear_conflicts_row_tricky(self):
 		g = np.array([[3,2,1],[8,0,4],[7,6,5]])
-		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)
+		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)[1]
 		self.assertEqual(4, lc, f'{bcolors.FAIL} wrong lc score {bcolors.ENDC}')
 	
 	def test_linear_conflicts_col_tricky(self):
 		g = np.array([[7,2,3],[8,0,4],[1,6,5]])
-		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)
+		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)[1]
 		self.assertEqual(4, lc, f'{bcolors.FAIL} wrong lc score {bcolors.ENDC}')
 	
 	def test_linear_conflicts_col_and_row(self):
 		g = np.array([[7,2,3],[8,0,4],[1,5,6]])
-		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)
+		lc = get_linear_conflicts(g, self.goal, self.goal_dict, self.size)[1]
 		self.assertEqual(6, lc, f'{bcolors.FAIL} wrong lc score {bcolors.ENDC}')
 
 class MisplacedT(TestCase):

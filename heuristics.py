@@ -31,16 +31,20 @@ def get_lc_line(row, goal_row):
 	return sum([v - 1 for v in counts.values()]) + 1
 
 def get_linear_conflicts(grid, goal, goal_dict, size):
-	#Ugly and slow
-	diff = 0
+	lc = 0
+	m = 0
 	for i in range(size):
 		col = grid[:,i]
 		row = grid[i,:]
 		goal_col = goal[:,i]
 		goal_row = goal[i,:]
-		diff += get_lc_line(list(row), list(goal_row))
-		diff += get_lc_line(list(col), list(goal_col))
-	return diff * 2
+		lc += get_lc_line(list(row), list(goal_row))
+		lc += get_lc_line(list(col), list(goal_col))
+		for x, val in enumerate(row): # TODO?: try to eliminate this extra loop (would have to refactor above function)
+			if val:
+				goal_pos_x, goal_pos_y = goal_dict[str(val)]
+				m += abs(x - goal_pos_x) + abs(i - goal_pos_y)
+	return (m, (lc * 2)) # Keeping separate for testing for now, but adds a few sec to bigger puzzles
 
 #Todo: store db somewhere so we don't have to open the file any times
 def get_pattern_cost(grid, size, dbs):
@@ -59,20 +63,6 @@ def get_misplaced_tiles(grid, goal):
 		return len(filtered[0]) - 1
 	return len(filtered[0])
 
-def get_manhattan_plus_linear_conflict(grid, goal, goal_dict, size):
-	#TODO: Broken :)
-	diff = 0
-	m = 0
-	for i in range(size):
-		col = grid[:,i]
-		row = grid[i,:]
-		goal_col = goal[:,i]
-		goal_row = goal[i,:]
-		diff += get_lc_line(list(row), list(goal_row))
-		diff += get_lc_line(list(col), list(goal_col))
-		#TODO: Manhattan.
-	return diff + m # * 2? TODO
-
 def get_manhattan(grid, goal, goal_dict, size):
 	diff = 0
 
@@ -90,10 +80,7 @@ def get_h_score(grid, goal, goal_dict, size, options, dbs):
 	if options.heuristic == 'db':
 		return get_pattern_cost(grid, size, dbs)
 	if options.heuristic == 'lc':
-		m = get_manhattan(grid, goal, goal_dict, size)
-		return m + get_linear_conflicts(grid, goal, goal_dict, size)
-	#Todo: merge
-	if options.heuristic == 'lc':
-		return get_manhattan_plus_linear_conflict(grid, goal, goal_dict, size)
+		m, lc = get_linear_conflicts(grid, goal, goal_dict, size)
+		return m + lc
 	if options.heuristic == 'mh':
 		return get_manhattan(grid, goal, goal_dict, size)

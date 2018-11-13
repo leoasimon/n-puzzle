@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 
 interpreter="python3"
-alg="-mh"
+alg="-he=mh"
 file=''
 oflag='-o '
 o_file=''
 visualizer="snakeviz"
 
 usage(){
-	printf "Usage: \n\t$0 puzzlefile [ -mh | -lc | other algo flag ] [-pypy3]\n\t$0 -d\n\n\t-d: deletes all .cprof files in this directory."
+	printf "Usage: \n\t$0 puzzlefile [ -he=mh | -he=lc | -he=other algo flag ] [-pypy3]\n\t$0 -d\n\n\t-d: deletes all .cprof files in this directory."
 	exit 1
 }
 
@@ -28,7 +28,7 @@ while test $# != 0
 do
     case "$1" in
     -pypy3) interpreter="pypy3" ;;
-    -mh|-lc|-db|-mt)
+    -he=mh|-he=lc|-he=db|-he=mt)
         alg="$1"; shift ;;
     --) shift; break;;
     esac
