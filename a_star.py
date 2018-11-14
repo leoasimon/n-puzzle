@@ -1,4 +1,4 @@
-from heuristics import get_h_score
+import heuristics as he
 from printer import print_solution
 from goal import Goal
 import numpy as np
@@ -36,10 +36,11 @@ class Node():
 class Stats():
 	"""Contains solver statistics"""
 
-	def __init__(self, size, algo="astar", heuristic="manhattan"):
+	def __init__(self, size, options):
 		self.size = size
-		self.algo = algo
-		self.heuristic = heuristic
+		self.algo = options.algorithm
+		self.h_name = self._get_h_name(options.heuristic)
+		
 		self.max_open = 0 # max number of nodes in opened queue (space complexity)
 		self.total_open = 0 # how many times we added to opened queue (time complexity)
 		self.total_popped = 0 # how many nodes we (re-)evaluated
@@ -60,20 +61,23 @@ class Stats():
 		else:
 			self.moves = num_moves
 
+	def _get_h_name(self, heuristic):
+		labels = {
+			"lc": "Manhattan distance + linear conflict",
+			"mh": "Manhattan distance",
+			"mt": "Misplaced tiles",
+			"db": "Pattern database",
+		}
+		return labels[heuristic]
+
 class Search():
 	"""Contains opened queue"""
 
 	def __init__(self, size, options={}):
 		self.opened = []
 		self.algo = options.algorithm
-		self.labels = {
-			"lc": "Manhattan distance + linear conflict",
-			"mh": "Manhattan distance",
-			"mt": "Misplaced tiles",
-			"db": "Pattern database",
-		}
-		self.heuristic = self.labels[options.heuristic]
-		self.stats = Stats(size, self.algo, self.heuristic)
+		self.stats = Stats(size, options)
+		self.h_fn = self.get_h_fn(options.heuristic)
 
 	def push_node(self, f_score, node):
 		heapq.heappush(self.opened, (f_score, node))
@@ -84,6 +88,15 @@ class Search():
 		node = heapq.heappop(self.opened)[1]
 		self.stats.increase_total_popped()
 		return node
+
+	def get_h_fn(self, heuristic):
+		labels = {
+			"lc": he.get_linear_conflicts,
+			"mh": he.get_manhattan,
+			"mt": he.get_misplaced_tiles,
+			"db": he.get_pattern_cost
+		}
+		return labels[heuristic]
 
 def solve(a, size, options, dbs):
 	a = Node(a)
@@ -96,7 +109,7 @@ def solve(a, size, options, dbs):
 
 	parents[a.tup] = None
 	g_scores[a.tup] = 0
-	f_scores[a.tup] = get_h_score(a.state, goal.state, goal.idx_dict, size, options, dbs)
+	f_scores[a.tup] = search.h_fn(a.state, goal.state, goal.idx_dict, size, dbs)
 
 	search.push_node(f_scores[a.tup], a)
 
@@ -106,7 +119,7 @@ def solve(a, size, options, dbs):
 	while len(search.opened):
 		curr = search.pop_node()
 		neighbors = get_neighbors(curr.state, size)
-		g = g_scores[curr.tup] + 1 if search.algo == "astar" else 0
+		g = g_scores[curr.tup] + 1 if search.stats.algo == "astar" else 0
 
 		for n in neighbors:
 			if n.tup == goal.tup:
@@ -115,7 +128,7 @@ def solve(a, size, options, dbs):
 				return print_solution(search.stats, n.tup, parents, options)
 
 			if n.tup not in g_scores:
-				h = get_h_score(n.state, goal.state, goal.idx_dict, size, options, dbs)
+				h = search.h_fn(n.state, goal.state, goal.idx_dict, size, dbs)
 				f_scores[n.tup] = h + g
 			elif g < g_scores[n.tup]:
 				f_scores[n.tup] -= g_scores[n.tup] - g

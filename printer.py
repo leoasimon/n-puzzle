@@ -14,7 +14,7 @@ def _get_path(curr_str, parents):
 	return l
 
 def print_solution(stats, n_str, parents, options={}):
-	print(f'Heuristic: {stats.heuristic}')
+	print(f'Heuristic: {stats.h_name}')
 	print(f'Search type: {stats.algo}')
 	print(f'Found solution in {stats.moves} moves.')
 	print(f'Total number added to open set (time complexity):  {stats.total_open}')
