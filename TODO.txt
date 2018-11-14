@@ -5,7 +5,11 @@ L
 	- Limit when puzzle is certain size
 	- Square size
 - Test Linear Conflict - l
-- Author file - l
+
+MANDATORY
+- Clean db builder
+- Test stdin
+- Author file
 
 E
 - Add more invalid files to puzzles and test - e
