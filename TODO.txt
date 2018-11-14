@@ -8,12 +8,8 @@ L
 
 MANDATORY
 - Clean db builder
-- Test stdin
-- Author file
 
 E
-- Add more invalid files to puzzles and test - e
-- Test with stdin also - e
 - Limit 15x15 (224-puzzle) so we can keep uint8 - e
 - Random generator - e
 - Remove unused imports - e
