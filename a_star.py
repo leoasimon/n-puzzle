@@ -1,6 +1,7 @@
 import heuristics as he
 from printer import print_solution
 from goal import Goal
+from create_db import get_dbs, get_goals
 import numpy as np
 import heapq
 
@@ -98,10 +99,13 @@ class Search():
 		}
 		return labels[heuristic]
 
-def solve(a, size, options, dbs):
+def solve(a, size, options):
 	a = Node(a)
 	goal = Goal(size)
 	search = Search(size, options)
+
+	goals = get_goals(size) if options.heuristic == 'db' else []
+	dbs = get_dbs(size) if options.heuristic == 'db' else []
 
 	g_scores = {}
 	f_scores = {}
@@ -109,7 +113,7 @@ def solve(a, size, options, dbs):
 
 	parents[a.tup] = None
 	g_scores[a.tup] = 0
-	f_scores[a.tup] = search.h_fn(a.state, goal.state, goal.idx_dict, size, dbs)
+	f_scores[a.tup] = search.h_fn(a.state, goal.state, goal.idx_dict, size, dbs, goals)
 
 	search.push_node(f_scores[a.tup], a)
 
@@ -128,7 +132,7 @@ def solve(a, size, options, dbs):
 				return print_solution(search.stats, n.tup, parents, options)
 
 			if n.tup not in g_scores:
-				h = search.h_fn(n.state, goal.state, goal.idx_dict, size, dbs)
+				h = search.h_fn(n.state, goal.state, goal.idx_dict, size, dbs, goals)
 				f_scores[n.tup] = h + g
 			elif g < g_scores[n.tup]:
 				f_scores[n.tup] -= g_scores[n.tup] - g

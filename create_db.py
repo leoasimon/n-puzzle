@@ -27,32 +27,15 @@ def get_db(s, n):
 	except:
 		handle_error(f'No database available for {s*s - 1} puzzles')
 
+def get_dbs(s):
+	return [get_db(s, name) for name in ['a', 'b', 'c']]
+
 def get_goals(s):
 	with open("goals.json", "r") as f:
 		g_dict = json.load(f)
 		names = [f'{s}x{s}_a', f'{s}x{s}_b', f'{s}x{s}_c']
 		g_list = [np.array(e) for e in [g_dict[n] for n in names]]
 		return g_list
-
-# def get_goals(size):
-# 	#Todo: handle different sizes
-# 	a = np.array([
-# 		[1,2,3],
-# 		[-1,-1,-1],
-# 		[-1,-1,-1]
-# 	])
-# 	b = np.array([
-# 		[-1,-1,-1],
-# 		[8,-1,4],
-# 		[-1,-1,-1]
-# 	])
-# 	c = np.array([
-# 		[-1,-1,-1],
-# 		[-1,-1,-1],
-# 		[7,6,5]
-# 	])
-# 	return [a,b,c]
-
 
 def createDb():
 	args = sys.argv[1:] if len(sys.argv) >= 2 else []
