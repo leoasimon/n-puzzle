@@ -8,7 +8,6 @@ import cProfile
 
 from parsing import parse
 from a_star import solve
-from gui import display_all
 from create_db import get_db
 
 def get_dbs(s):
@@ -17,12 +16,6 @@ def get_dbs(s):
 if __name__ == '__main__':
 	a, size, options = parse()
 	dbs = get_dbs(size) if options.heuristic == 'db' else []
-	path = solve(a, size, options, dbs)
-	if options.verbose:
-		for j, e in enumerate(path):
-			print(f'move: {j}', end=' ')
-			print(e)
-	if options.gui:
-		display_all(size, path)
+	solve(a, size, options, dbs)
 	sys.exit(0)
 	

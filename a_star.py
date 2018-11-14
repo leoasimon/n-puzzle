@@ -1,5 +1,5 @@
 from heuristics import get_h_score
-from printer import print_solution, get_path
+from printer import print_solution
 from goal import Goal
 import numpy as np
 import heapq
@@ -101,7 +101,7 @@ def solve(a, size, options, dbs):
 	search.push_node(f_scores[a.tup], a)
 
 	if np.array_equal(a.state, goal.state):
-		return print_solution(search.stats, a.tup, parents, 0)
+		return print_solution(search.stats, a.tup, parents, options)
 
 	while len(search.opened):
 		curr = search.pop_node()
@@ -112,7 +112,7 @@ def solve(a, size, options, dbs):
 			if n.tup == goal.tup:
 				parents[n.tup] = curr.tup
 				search.stats.set_moves(g)
-				return print_solution(search.stats, n.tup, parents, 0)
+				return print_solution(search.stats, n.tup, parents, options)
 
 			if n.tup not in g_scores:
 				h = get_h_score(n.state, goal.state, goal.idx_dict, size, options, dbs)

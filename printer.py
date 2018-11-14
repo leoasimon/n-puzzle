@@ -4,16 +4,16 @@
 import sys
 from collections import deque
 
-def get_path(curr_str, parents):
+from gui import display_all
+
+def _get_path(curr_str, parents):
 	l = []
 	while curr_str is not None:
 		l.append(curr_str)
 		curr_str = parents[curr_str]
 	return l
 
-def print_solution(stats, n_str, parents, i):
-	l = get_path(n_str, parents)
-
+def print_solution(stats, n_str, parents, options={}):
 	print(f'Heuristic: {stats.heuristic}')
 	print(f'Search type: {stats.algo}')
 	print(f'Found solution in {stats.moves} moves.')
@@ -23,4 +23,11 @@ def print_solution(stats, n_str, parents, i):
 		f'(plus {len(parents) * 3})' # For g_score, f_score, and parents dicts
 	) #TODO: DB?
 
-	return l
+	if options.verbose or options.gui:
+		path = _get_path(n_str, parents)
+		if options.verbose:
+			for j, e in enumerate(path):
+				print(f'move: {j}', end=' ')
+				print(e)
+		if options.gui:
+			display_all(stats.size, path)
