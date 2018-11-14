@@ -11,7 +11,7 @@ import unittest as ut
 sys.path.insert(0, join(getcwd(), "../"))
 import numpy as np
 
-from solvable import _get_inversions, get_solvable
+from solvable import _get_inversions, get_solvable, generate_solvable
 
 dir_path = dirname(realpath(__file__))
 p_path = join(dir_path, "../n-puzzle.py")
@@ -55,14 +55,14 @@ def unfold(grid, size):
 	return l
 
 class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+	HEADER = '\033[95m'
+	OKBLUE = '\033[94m'
+	OKGREEN = '\033[92m'
+	WARNING = '\033[93m'
+	FAIL = '\033[91m'
+	ENDC = '\033[0m'
+	BOLD = '\033[1m'
+	UNDERLINE = '\033[4m'
 
 class Valid(TestCase):
 	def setUp(self):
@@ -112,6 +112,12 @@ class Unsolvable(TestCase):
 		a = np.array([[9, 3, 7, 12], [1, 8, 15, 11], [10, 0, 5, 14], [13, 2, 6, 4]])
 		self.assertFalse(get_solvable(a, 4))
 
+class GenerateSolvable(TestCase):
+	def test_makes_solvable_from_any_size(self):
+		for i in range(3, 16):
+			with self.subTest(i=i):
+				g = generate_solvable(i)
+				self.assertTrue(get_solvable(g, i))
 	
 if __name__ == '__main__':
 	if '-v' not in sys.argv:

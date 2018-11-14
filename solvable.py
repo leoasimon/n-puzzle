@@ -2,7 +2,6 @@
 
 import numpy as np
 from goal import make_goal
-import sys
 
 def _get_inversions(grid1D):
 	if not len(grid1D):
@@ -13,6 +12,13 @@ def _get_inversions(grid1D):
 			if a > b and a > 0 and b > 0:
 				inversions += 1
 	return inversions
+
+def _change_inversions(grid):
+	"""Updates board in-place so that total inversions is increased or decreased by 1"""
+	a,b = np.dstack(np.where(grid > 0))[0][:2]
+	tmp = grid[tuple(a)]
+	grid[tuple(a)] = grid[tuple(b)]
+	grid[tuple(b)] = tmp
 
 def get_solvable(grid, size):
 	# each legal vertical move changes total inversions, horizontal moves do not
@@ -35,6 +41,9 @@ def get_solvable(grid, size):
 		inversions_goal += blank_row_goal & 1
 		inversions_grid += blank_row_start & 1
 	return bool(inversions_grid & 1) == (inversions_goal & 1)
-	
-if __name__ == "__main__":
-	pass
+
+def generate_solvable(size):
+	puzzle = np.arange(size ** 2).reshape(size, size)
+	if not get_solvable(puzzle, size):
+		_change_inversions(puzzle)
+	return puzzle
