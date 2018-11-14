@@ -45,5 +45,20 @@ class Stdin(TestCase):
 					errors.append(fname)
 		self.assertCountEqual(files, errors)
 
+	def test_valids(self):
+		print(bcolors.HEADER + "-----VALIDS STDIN-----")
+		files = listdir(join(getcwd(), "puzzles/valids"))
+		errors = []
+		for fname in files:
+			print(bcolors.OKBLUE + fname + bcolors.ENDC)
+			path = join(getcwd(), "puzzles/valids", fname)
+			with  subprocess.Popen(('cat', path), stdout=subprocess.PIPE) as ps:
+				try:
+					out = subprocess.check_output((p_path), stdin=ps.stdout, shell=True, 
+					timeout=3, universal_newlines=True)
+					print(out)
+				except:
+					errors.append(fname)
+	
 if __name__ == '__main__':
 	ut.main()
