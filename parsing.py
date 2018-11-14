@@ -56,6 +56,15 @@ def parsefile(name, options={}):
 	f.close()
 	return checked(np.array(puzzle, dtype=np.uint8), size, options)
 	
+def parse_stdin(options={}):
+	try:
+		lines = [l.split() for l in sys.stdin if l[0] != "#"]
+		size = int(lines.pop(0)[0])
+		lines = [get_int_lst(l) for l in lines]
+		return checked(np.array(lines, dtype=np.uint8), size, options)
+	except PuzzleProblem as pp:
+		sys.exit(f'\033[91m{str(pp)}\033[0m')
+
 # return tuple(2D array, int, [options])
 def parse():
 	parser = argparse.ArgumentParser()
@@ -76,11 +85,4 @@ def parse():
 		except PuzzleProblem as pp:
 			sys.exit(f'\033[91m{str(pp)}\033[0m')
 	else:
-		# TODO: Add'l tests
-		lines = [l.split() for l in sys.stdin if l[0] != "#"]
-		size = int(lines.pop(0)[0])
-		lines = [get_int_lst(l) for l in lines]
-		try:
-			return checked(np.array(lines, dtype=np.uint8), size, args)
-		except PuzzleProblem as pp:
-			sys.exit(f'\033[91m{str(pp)}\033[0m')
+		return parse_stdin(args)
