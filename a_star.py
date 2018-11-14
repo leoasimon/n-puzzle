@@ -4,26 +4,6 @@ from goal import Goal
 import numpy as np
 import heapq
 
-# def get_empty_coords(grid):
-# 	pos_empty = np.where(grid == 0)
-# 	return tuple(z[0] for z in pos_empty) # note: returns y, x
-
-# def get_swap(grid, ax, ay, bx, by, s):
-# 	if by == s or by < 0 or bx == s or bx < 0:
-# 		return None
-# 	grid_copy = np.array(grid)
-# 	grid_copy[ay, ax] = grid[by, bx]
-# 	grid_copy[by, bx] = 0
-# 	return grid_copy
-
-# def get_neighbors(grid, size):
-# 	y, x = get_empty_coords(grid)
-# 	u = get_swap(grid, x, y, x, y + 1, size)
-# 	r = get_swap(grid, x, y, x - 1, y, size)
-# 	d = get_swap(grid, x, y, x, y - 1, size)
-# 	l = get_swap(grid, x, y, x + 1, y, size)
-# 	return [Node(e) for e in [u,r,d,l] if e is not None]
-
 class Node():
 	"""A convenient way of housing grid states"""
 	def __init__(self, state):
