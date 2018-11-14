@@ -47,6 +47,19 @@ def file_to_lines(fd):
 		return (size, puzzle)
 	except IndexError:
 		raise PuzzleProblem("Format error: Problem with input file lines.")
+	except UnicodeDecodeError:
+		raise PuzzleProblem("Format error: File type is not valid")
+
+def stdin_to_line():
+	try:
+		lines = [l.split() for l in sys.stdin if l[0] != "#"]
+		size = int(lines.pop(0)[0])
+		lines = [get_int_lst(l) for l in lines]
+		return (size, lines)
+	except IndexError:
+		raise PuzzleProblem("Format error: Problem with input file lines.")
+	except UnicodeDecodeError:
+		raise PuzzleProblem("Format error: File type is not valid")
 
 # params: filename, options[]
 # return tuple(2D array, int, [options])
@@ -57,13 +70,8 @@ def parsefile(name, options={}):
 	return checked(np.array(puzzle, dtype=np.uint8), size, options)
 	
 def parse_stdin(options={}):
-	try:
-		lines = [l.split() for l in sys.stdin if l[0] != "#"]
-		size = int(lines.pop(0)[0])
-		lines = [get_int_lst(l) for l in lines]
-		return checked(np.array(lines, dtype=np.uint8), size, options)
-	except PuzzleProblem as pp:
-		sys.exit(f'\033[91m{str(pp)}\033[0m')
+	size, puzzle = stdin_to_line()
+	return checked(np.array(puzzle, dtype=np.uint8), size, options)
 
 # return tuple(2D array, int, [options])
 def parse():
@@ -85,4 +93,7 @@ def parse():
 		except PuzzleProblem as pp:
 			sys.exit(f'\033[91m{str(pp)}\033[0m')
 	else:
-		return parse_stdin(args)
+		try:
+			return parse_stdin(args)
+		except PuzzleProblem as pp:
+			sys.exit(f'\033[91m{str(pp)}\033[0m')
