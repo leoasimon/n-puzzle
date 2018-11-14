@@ -10,6 +10,4 @@ MANDATORY
 - Clean db builder
 
 E
-- Limit 15x15 (224-puzzle) so we can keep uint8 - e
-- Random generator - e
 - Remove unused imports - e

@@ -24,7 +24,9 @@ def secured_open(filename):
 
 # return: tuple(2D array, int, options[])
 def checked(puzzle, size, options={}):
-	if size > 10:
+	if size < 3:
+		raise PuzzleProblem("That puzzle is too small.")
+	if size > 15:
 		raise PuzzleProblem("That puzzle is too big for me.")
 	if not all(len(y) == len(puzzle) == size for y in puzzle):
 		raise PuzzleProblem("Format error: size does not match.")
@@ -83,7 +85,7 @@ def parse():
 	parser.add_argument("-he", "--heuristic", default="mh", choices=heuristics, help="choose a heuristic function")
 
 	parser.add_argument("-a", "--algorithm", default="astar", choices=["astar", "greedy"])
-	
+
 	args = parser.parse_args()
 
 	try:
