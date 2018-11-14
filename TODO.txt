@@ -7,7 +7,7 @@ L
 - Test Linear Conflict - l
 
 MANDATORY
-- Clean db builder
+- heuristic race test
 
 E
 - Remove unused imports - e
