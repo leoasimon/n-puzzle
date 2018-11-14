@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 import numpy as np
-from goal import make_goal
+from goal import Goal
 from error import PuzzleProblem
 
 def _get_inversions(grid1D):
@@ -29,14 +29,13 @@ def get_solvable(grid, size):
 	inversions_grid = _get_inversions(grid1D)
 
 	side_odd = bool(size & 1)
-	goal = make_goal(size)
+	g = Goal(size)
 	
-	goal1D = goal.flatten()
-	inversions_goal = _get_inversions(goal1D)
+	inversions_goal = _get_inversions(g.state.flatten())
 
 	if not side_odd: 
 		blank_row_start = size - np.where(grid == 0)[0]
-		blank_row_goal = size - np.where(goal == 0)[0]
+		blank_row_goal = size - np.where(g.state == 0)[0]
 
 		# compensate for variable goal row polarity in spiral board
 		inversions_goal += blank_row_goal & 1

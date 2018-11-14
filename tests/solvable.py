@@ -1,39 +1,14 @@
 #! /usr/bin/env python3
 
-from io import StringIO
-from os import getcwd, listdir
-from os.path import join, dirname, realpath
+from os import getcwd
+from os.path import join
 import sys
-import subprocess
-from unittest import TestCase
-from unittest.mock import patch
-import unittest as ut
-
+import unittest
 sys.path.insert(0, join(getcwd(), "../"))
 import numpy as np
 
 from error import PuzzleProblem
 from solvable import _get_inversions, get_solvable, generate_solvable
-
-dir_path = dirname(realpath(__file__))
-p_path = join(dir_path, "../n-puzzle.py")
-
-def _get_sides(grid, n, maxval, v=1, x=0, y=0):
-	if v > maxval:
-		return grid
-
-	for _ in range(4):
-		if v <= maxval:
-			vec = np.arange(v, v + n - 1)
-			grid[y, x:x+vec.shape[0]] = vec
-		v += n - 1
-		grid = np.rot90(grid)
-	return _get_sides(grid, n - 2, maxval, v, x+1, y+1)
-
-def make_goal(size):
-	maxval = pow(size, 2) - 1
-	grid = np.zeros((size, size), dtype=np.uint8)
-	return _get_sides(grid, size, maxval)
 
 def fold(grid, l, size, off=0):
 	if not len(l):
@@ -66,7 +41,7 @@ class bcolors:
 	BOLD = '\033[1m'
 	UNDERLINE = '\033[4m'
 
-class Valid(TestCase):
+class Valid(unittest.TestCase):
 	def setUp(self):
 		pass
 
@@ -97,7 +72,7 @@ class Valid(TestCase):
 		a = np.array([[7, 0, 8, 10], [3, 1, 2, 12], [14, 9, 5, 13], [4, 6, 11, 15]])
 		self.assertTrue(get_solvable(a, 4))
 
-class Unsolvable(TestCase):
+class Unsolvable(unittest.TestCase):
 	def test_unsolvable_sidelen_odd_start_odd(self):
 		a = np.array([[6, 8, 2], [5, 3, 7], [0, 1, 4]])
 		self.assertFalse(get_solvable(a, 3))
@@ -114,7 +89,7 @@ class Unsolvable(TestCase):
 		a = np.array([[9, 3, 7, 12], [1, 8, 15, 11], [10, 0, 5, 14], [13, 2, 6, 4]])
 		self.assertFalse(get_solvable(a, 4))
 
-class GenerateSolvable(TestCase):
+class GenerateSolvable(unittest.TestCase):
 	def test_makes_solvable_from_any_size(self):
 		for i in range(3, 15):
 			with self.subTest(i=i):
@@ -136,4 +111,4 @@ class GenerateSolvable(TestCase):
 if __name__ == '__main__':
 	if '-v' not in sys.argv:
 		print(f'{bcolors.OKBLUE} Recommended usage: ./solvable.py -v {bcolors.ENDC}')
-	ut.main()
+	unittest.main()

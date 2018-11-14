@@ -1,20 +1,13 @@
 #! /usr/bin/env python3
 
-from io import StringIO
-from os import getcwd, listdir
-from os.path import join, dirname, realpath
+from os import getcwd
+from os.path import join
 import sys
-import subprocess
-from unittest import TestCase
-from unittest.mock import patch
-import unittest as ut
+import unittest
 sys.path.insert(0, join(getcwd(), "../"))
 import numpy as np
 
-from goal import get_goal_dict, make_goal
-
-dir_path = dirname(realpath(__file__))
-p_path = join(dir_path, "../n-puzzle.py")
+from goal import Goal
 
 def fold(grid, l, size, off=0):
 	if not len(l):
@@ -47,32 +40,25 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-class Goal(TestCase):
-	def setUp(self):
-		self.goals = {}
-		for i in range (3, 10):
-			self.goals[str(i)] = make_goal(i)
-
-	def tearDown(self):
-		pass
-
+class GoalTest(unittest.TestCase):
 	def test_all_ints_in_range_on_board(self):
-		all_ints_in_range = []
-		for t in self.goals:
-			tf = self.goals[t].flatten()
-			all_ints_in_range.append(np.array_equal(np.sort(tf), np.arange(pow(int(t), 2), dtype=np.uint8)))
-		self.assertNotIn(False, all_ints_in_range, msg='Not all ints are present on some.')
+		for i in range(3, 15):
+			with self.subTest(i=i):
+				g = Goal(i)
+				tf = g.state.flatten()
+				self.assertTrue(np.array_equal(np.sort(tf), np.arange(pow(int(i), 2), dtype=np.uint8)), msg='Not all ints are present on some.')
 
 	def test_all_ints_contiguous(self):
-		all_ints_contiguous = []
-		for t in self.goals:
-			tf = np.sort(self.goals[t].flatten())[1:]
-			unfolded = np.array(unfold(self.goals[t], int(t)))[:-1]
-			all_ints_contiguous.append(np.array_equal(tf, unfolded))
-		self.assertNotIn(False, all_ints_contiguous, msg='Not all ints are contiguous.')
-
+		for i in range(3, 15):
+			with self.subTest(i=i):
+				g = Goal(i)
+				r = np.arange(pow(int(i), 2), dtype=np.uint8)
+				r = r[r>0]
+				unfolded = np.array(unfold(g.state, i))
+				unfolded = unfolded[unfolded>0]
+				self.assertTrue(np.array_equal(r, unfolded), msg='Not all ints are contiguous.')
 	
 if __name__ == '__main__':
 	if '-v' not in sys.argv:
 		print(f'{bcolors.OKBLUE} Recommended usage: ./goal.py -v {bcolors.ENDC}')
-	ut.main()
+	unittest.main()
