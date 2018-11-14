@@ -23,9 +23,6 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-dir_path = dirname(realpath(__file__))
-p_path = join(dir_path, "../n-puzzle.py")
-
 class Stdin(TestCase):
 	def tearDown(self):
 		pass
