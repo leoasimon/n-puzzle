@@ -8,9 +8,11 @@ import subprocess
 from unittest import TestCase
 from unittest.mock import patch
 import unittest as ut
+
 sys.path.insert(0, join(getcwd(), "../"))
 import numpy as np
 
+from error import PuzzleProblem
 from solvable import _get_inversions, get_solvable, generate_solvable
 
 dir_path = dirname(realpath(__file__))
@@ -114,10 +116,22 @@ class Unsolvable(TestCase):
 
 class GenerateSolvable(TestCase):
 	def test_makes_solvable_from_any_size(self):
-		for i in range(3, 16):
+		for i in range(3, 15):
 			with self.subTest(i=i):
 				g = generate_solvable(i)
 				self.assertTrue(get_solvable(g, i))
+
+	def test_too_small_raises(self):
+		for i in range(-3, 3):
+			with self.subTest(i=i):
+				with self.assertRaises(PuzzleProblem):
+					generate_solvable(i)
+
+	def test_too_big_raises(self):
+		for i in np.random.randint(16, sys.maxsize, size=10):
+			with self.subTest(i=i):
+				with self.assertRaises(PuzzleProblem, msg=f'{i} did not raise PuzzleProblem'):
+					generate_solvable(i)
 	
 if __name__ == '__main__':
 	if '-v' not in sys.argv:

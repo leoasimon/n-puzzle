@@ -8,7 +8,7 @@ from unittest import TestCase
 import unittest as ut
 
 sys.path.insert(0, join(getcwd(), "../"))
-from parsing import parse_stdin, PuzzleProblem
+from parsing import parse_stdin
 
 dir_path = dirname(realpath(__file__))
 p_path = join(dir_path, "../n-puzzle.py")

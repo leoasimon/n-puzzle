@@ -3,11 +3,9 @@
 # 
 import sys
 import numpy as np
-from solvable import get_solvable
+from error import PuzzleProblem
+from solvable import get_solvable, generate_solvable
 import argparse
-
-class PuzzleProblem(Exception):
-	pass
 
 def get_int_lst(l):
 	try:
@@ -73,10 +71,11 @@ def parse_stdin(options={}):
 	size, puzzle = stdin_to_line()
 	return checked(np.array(puzzle, dtype=np.uint8), size, options)
 
-# return tuple(2D array, int, [options])
+# return tuple(2D array, int, args)
 def parse():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("name", nargs="?", help="Name of the file to open")
+	parser.add_argument("-rb", "--randomboard", type=int, help="Create a random solvable puzzle with edge length of given size")
 	parser.add_argument("-g", "--gui", action="store_true", help="Display the solution in a gui window")
 	parser.add_argument("-v", "--verbose", action="store_true", help="Display the different states of the solution")
 
@@ -84,16 +83,16 @@ def parse():
 	parser.add_argument("-he", "--heuristic", default="mh", choices=heuristics, help="choose a heuristic function")
 
 	parser.add_argument("-a", "--algorithm", default="astar", choices=["astar", "greedy"])
-
+	
 	args = parser.parse_args()
 
-	if args.name:
-		try:
+	try:
+		if args.randomboard:
+			size = args.randomboard
+			return (generate_solvable(size), size, args)
+		elif args.name:
 			return parsefile(args.name, args)
-		except PuzzleProblem as pp:
-			sys.exit(f'\033[91m{str(pp)}\033[0m')
-	else:
-		try:
+		else:
 			return parse_stdin(args)
-		except PuzzleProblem as pp:
-			sys.exit(f'\033[91m{str(pp)}\033[0m')
+	except PuzzleProblem as pp:
+		sys.exit(f'\033[91m{str(pp)}\033[0m')

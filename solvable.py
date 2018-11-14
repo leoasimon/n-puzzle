@@ -2,6 +2,7 @@
 
 import numpy as np
 from goal import make_goal
+from error import PuzzleProblem
 
 def _get_inversions(grid1D):
 	if not len(grid1D):
@@ -43,6 +44,8 @@ def get_solvable(grid, size):
 	return bool(inversions_grid & 1) == (inversions_goal & 1)
 
 def generate_solvable(size):
+	if size > 15 or size < 3:
+		raise PuzzleProblem('Invalid puzzle size. Must be between 3-15.')
 	puzzle = np.arange(size ** 2).reshape(size, size)
 	if not get_solvable(puzzle, size):
 		_change_inversions(puzzle)
