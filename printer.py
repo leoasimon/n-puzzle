@@ -24,22 +24,22 @@ def _get_path(curr_str, parents):
 	return list(reversed(l))
 
 def print_solution(stats, n_str, parents, options={}):
-	if options.verbose or options.gui:
-		path = _get_path(n_str, parents)
+	path = _get_path(n_str, parents)
+	moves = len(path) - 1
+	if options.verbose:
+		print(f'start: {" ":15} {path[0]}')
+		for j, e in enumerate(path[1:], 1):
+			print(f'move:  {j:<15}', end=' ')
+			print(e)
 
-		if options.verbose:
-			for j, e in enumerate(path):
-				print(f'move: {j}', end=' ')
-				print(e)
-
-	print(f'\n--- Found solution in {C.HEADER}{stats.moves}{C.ENDC} moves. ---\n')
+	print(f'\n--- Found solution in {C.HEADER}{moves}{C.ENDC} moves. ---\n')
 	print(f'Heuristic:                                         {C.BOLD}{stats.h_name}{C.ENDC}')
 	print(f'Search type:                                       {C.BOLD}{stats.algo}{C.ENDC}')
 	print(f'Time complexity:'
 		f'\n\tTotal added to open queue: {C.BOLD}{stats.total_open}{C.ENDC}')
 	print(
 		f'Space complexity:'
-		f'\n\tOpen set max:              {C.BOLD}{stats.max_open}{C.ENDC}'
+		f'\n\tOpen queue max:            {C.BOLD}{stats.max_open}{C.ENDC}'
 		f'\n\tLookup dicts:              {C.BOLD}3 * {len(parents)}{C.ENDC}' # For g_score, f_score, and parents dicts
 	)
 	if options.heuristic == 'db':

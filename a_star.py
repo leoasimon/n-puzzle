@@ -44,23 +44,12 @@ class Stats():
 		
 		self.max_open = 0 # max number of nodes in opened queue (space complexity)
 		self.total_open = 0 # how many times we added to opened queue (time complexity)
-		self.total_popped = 0 # how many nodes we (re-)evaluated
-		self.moves = 0
 
 	def increase_total_added(self):
 		self.total_open += 1
 
 	def update_max_open(self, other):
 		self.max_open = max(self.max_open, other)
-
-	def increase_total_popped(self):
-		self.total_popped += 1
-
-	def set_moves(self, num_moves=None):
-		if self.algo == "greedy":
-			self.moves = self.total_popped
-		else:
-			self.moves = num_moves
 
 	def _get_h_name(self, heuristic):
 		labels = {
@@ -87,7 +76,6 @@ class Search():
 
 	def pop_node(self):
 		node = heapq.heappop(self.opened)[1]
-		self.stats.increase_total_popped()
 		return node
 
 	def get_h_fn(self, heuristic):
@@ -128,7 +116,6 @@ def solve(a, size, options):
 		for n in neighbors:
 			if n.tup == goal.tup:
 				parents[n.tup] = curr.tup
-				search.stats.set_moves(g)
 				return print_solution(search.stats, n.tup, parents, options)
 
 			if n.tup not in g_scores:
