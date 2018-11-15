@@ -55,7 +55,7 @@ def generate_solvable(size):
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
-	parser.add_argument("-s", "--size", type=int, default=3, choices=range(3, 15))
+	parser.add_argument("-s", "--size", type=int, default=3, choices=range(3, 16))
 	args = parser.parse_args()
 	puzzle = generate_solvable(args.size)
 	print('# This puzzle is solvable.')
