@@ -86,7 +86,7 @@ def parse_stdin(options={}):
 # return tuple(2D array, int, args)
 def parse():
 	heuristics = ["lc","mh","db","mt"]
-	algorithm_types = ["astar", "greedy"]
+	algorithm_types = ["astar", "greedy", "uniform"]
 	parser = argparse.ArgumentParser()
 
 	parser.add_argument("name", nargs="?", help="Name of the file to open")

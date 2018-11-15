@@ -123,7 +123,7 @@ def solve(start, size, options):
 				return print_solution(search.stats, n.tup, parents, options)
 
 			if n.tup not in g_scores:
-				h = search.h_fn(n.state, goal.state, goal.idx_dict, size, dbs, goals)
+				h = search.h_fn(n.state, goal.state, goal.idx_dict, size, dbs, goals) if search.stats.algo != "uniform" else 0  
 				f_scores[n.tup] = h + g
 			elif g < g_scores[n.tup]:
 				f_scores[n.tup] -= g_scores[n.tup] - g
