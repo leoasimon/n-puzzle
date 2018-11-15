@@ -1,9 +1,13 @@
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import numpy as np
+import heapq
+
 import heuristics as he
 from printer import print_solution
 from goal import Goal
 from create_db import get_dbs, get_goals
-import numpy as np
-import heapq
 
 class Node():
 	"""A convenient way of housing grid states"""
@@ -79,13 +83,13 @@ class Search():
 		return node
 
 	def get_h_fn(self, heuristic):
-		labels = {
+		h_fns = {
 			"lc": he.get_linear_conflicts,
 			"mh": he.get_manhattan,
 			"mt": he.get_misplaced_tiles,
 			"db": he.get_pattern_cost
 		}
-		return labels[heuristic]
+		return h_fns[heuristic]
 
 def solve(start, size, options):
 	start = Node(start)

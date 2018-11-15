@@ -24,15 +24,24 @@ def secured_open(filename):
 	except:
 		raise PuzzleProblem(f'No file {filename}')
 
-def checked(puzzle, size, options={}):
-	if size < 3:
+def checked(lines, size, options={}):
+	if not lines or not size:
+		raise PuzzleProblem("Missing size or puzzle data.")
+	elif len(lines) != size:
+		raise PuzzleProblem("Puzzle length does not match size.")
+	elif size < 3:
 		raise PuzzleProblem("That puzzle is too small.")
-	if size > 15:
+	elif size > 15:
 		raise PuzzleProblem("That puzzle is too big for me.")
-	if not all(len(y) == len(puzzle) == size for y in puzzle):
-		raise PuzzleProblem("Format error: size does not match.")
-	if not (np.array_equal(np.sort(puzzle.flatten()), np.arange(pow(size, 2), dtype=np.uint8))):
+
+	if not all(len(y) == len(lines) == size for y in lines):
+		raise PuzzleProblem("Format error: puzzle is not a square.")
+
+	lines_flattened = np.array([j for line in lines for j in line])
+	if not (np.array_equal(np.sort(lines_flattened), np.arange(size ** 2, dtype=np.uint8))):
 		raise PuzzleProblem("Puzzle error: Invalid numeric range in puzzles.")
+
+	puzzle = np.reshape(lines_flattened, (size, size))
 	if not get_solvable(puzzle, size):
 		raise PuzzleProblem("Puzzle error: Unsolvable puzzle.")
 	return (puzzle, size, options)
@@ -42,8 +51,8 @@ def file_to_lines(fd):
 		usable_lines = [line.rstrip('\n').split() for line in fd if '#' not in line]
 		int_lines = [get_int_lst(l) for l in usable_lines]
 		size = int_lines[0][0]
-		puzzle = int_lines[1:]
-		return (size, puzzle)
+		puzzle_lines = int_lines[1:]
+		return (size, puzzle_lines)
 	except IndexError:
 		raise PuzzleProblem("Format error: Problem with input file lines.")
 	except UnicodeDecodeError:
@@ -62,13 +71,13 @@ def stdin_to_line():
 
 def parsefile(name, options={}):
 	f = secured_open(name)
-	size, puzzle = file_to_lines(f)
+	size, lines = file_to_lines(f)
 	f.close()
-	return checked(np.array(puzzle, dtype=np.uint8), size, options)
+	return checked(lines, size, options)
 	
 def parse_stdin(options={}):
-	size, puzzle = stdin_to_line()
-	return checked(np.array(puzzle, dtype=np.uint8), size, options)
+	size, lines = stdin_to_line()
+	return checked(lines, size, options)
 
 # return tuple(2D array, int, args)
 def parse():

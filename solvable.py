@@ -1,6 +1,9 @@
 #! /usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 import numpy as np
+import argparse
+
 from goal import Goal
 from error import PuzzleProblem
 
@@ -49,3 +52,13 @@ def generate_solvable(size):
 	if not get_solvable(puzzle, size):
 		_change_inversions(puzzle)
 	return puzzle
+
+if __name__ == '__main__':
+	parser = argparse.ArgumentParser()
+	parser.add_argument("-s", "--size", type=int, default=3, choices=range(3, 15))
+	args = parser.parse_args()
+	puzzle = generate_solvable(args.size)
+	print('# This puzzle is solvable.')
+	print(args.size)
+	for row in puzzle:
+		print(*row, sep=' ')
