@@ -87,8 +87,8 @@ class Search():
 		}
 		return labels[heuristic]
 
-def solve(a, size, options):
-	a = Node(a)
+def solve(start, size, options):
+	start = Node(start)
 	goal = Goal(size)
 	search = Search(size, options)
 
@@ -99,14 +99,14 @@ def solve(a, size, options):
 	f_scores = {}
 	parents = {}
 
-	parents[a.tup] = None
-	g_scores[a.tup] = 0
-	f_scores[a.tup] = search.h_fn(a.state, goal.state, goal.idx_dict, size, dbs, goals)
+	parents[start.tup] = None
+	g_scores[start.tup] = 0
+	f_scores[start.tup] = search.h_fn(start.state, goal.state, goal.idx_dict, size, dbs, goals)
 
-	search.push_node(f_scores[a.tup], a)
+	search.push_node(f_scores[start.tup], start)
 
-	if np.array_equal(a.state, goal.state):
-		return print_solution(search.stats, a.tup, parents, options)
+	if np.array_equal(start.state, goal.state):
+		return print_solution(search.stats, start.tup, parents, options)
 
 	while len(search.opened):
 		curr = search.pop_node()

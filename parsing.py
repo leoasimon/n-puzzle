@@ -1,11 +1,13 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
-# 
+
 import sys
+import argparse
 import numpy as np
+
 from error import PuzzleProblem
 from solvable import get_solvable, generate_solvable
-import argparse
+from printer import C
 
 def get_int_lst(l):
 	try:
@@ -22,7 +24,6 @@ def secured_open(filename):
 	except:
 		raise PuzzleProblem(f'No file {filename}')
 
-# return: tuple(2D array, int, options[])
 def checked(puzzle, size, options={}):
 	if size < 3:
 		raise PuzzleProblem("That puzzle is too small.")
@@ -36,8 +37,6 @@ def checked(puzzle, size, options={}):
 		raise PuzzleProblem("Puzzle error: Unsolvable puzzle.")
 	return (puzzle, size, options)
 
-# params: filename
-# return tuple(int, 2D array)
 def file_to_lines(fd):
 	try:
 		usable_lines = [line.rstrip('\n').split() for line in fd if '#' not in line]
@@ -61,8 +60,6 @@ def stdin_to_line():
 	except UnicodeDecodeError:
 		raise PuzzleProblem("Format error: File type is not valid")
 
-# params: filename, options[]
-# return tuple(2D array, int, [options])
 def parsefile(name, options={}):
 	f = secured_open(name)
 	size, puzzle = file_to_lines(f)
@@ -75,16 +72,16 @@ def parse_stdin(options={}):
 
 # return tuple(2D array, int, args)
 def parse():
+	heuristics = ["lc","mh","db","mt"]
+	algorithm_types = ["astar", "greedy"]
 	parser = argparse.ArgumentParser()
+
 	parser.add_argument("name", nargs="?", help="Name of the file to open")
 	parser.add_argument("-rp", "--randompuzzle", type=int, help="Create a random solvable puzzle with edge length of given size")
 	parser.add_argument("-g", "--gui", action="store_true", help="Display the solution in a gui window")
 	parser.add_argument("-v", "--verbose", action="store_true", help="Display the different states of the solution")
-
-	heuristics = ["lc","mh","db","mt"]
 	parser.add_argument("-he", "--heuristic", default="mh", choices=heuristics, help="choose a heuristic function")
-
-	parser.add_argument("-a", "--algorithm", default="astar", choices=["astar", "greedy"])
+	parser.add_argument("-a", "--algorithm", default="astar", choices=algorithm_types)
 
 	args = parser.parse_args()
 
@@ -97,4 +94,4 @@ def parse():
 		else:
 			return parse_stdin(args)
 	except PuzzleProblem as pp:
-		sys.exit(f'\033[91m{str(pp)}\033[0m')
+		sys.exit(f'{C.FAIL}{str(pp)}{C.ENDC}')

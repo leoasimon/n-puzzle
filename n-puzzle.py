@@ -2,14 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import re
-
-import cProfile
 
 from parsing import parse
 from a_star import solve
 
 if __name__ == '__main__':
-	a, size, options = parse()
-	solve(a, size, options)
+	start, size, options = parse()
+	solve(start, size, options)
 	sys.exit(0)

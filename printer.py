@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from collections import deque
 
 from gui import display_all
 
