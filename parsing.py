@@ -77,7 +77,7 @@ def parse_stdin(options={}):
 def parse():
 	parser = argparse.ArgumentParser()
 	parser.add_argument("name", nargs="?", help="Name of the file to open")
-	parser.add_argument("-rb", "--randomboard", type=int, help="Create a random solvable puzzle with edge length of given size")
+	parser.add_argument("-rp", "--randompuzzle", type=int, help="Create a random solvable puzzle with edge length of given size")
 	parser.add_argument("-g", "--gui", action="store_true", help="Display the solution in a gui window")
 	parser.add_argument("-v", "--verbose", action="store_true", help="Display the different states of the solution")
 
@@ -89,8 +89,8 @@ def parse():
 	args = parser.parse_args()
 
 	try:
-		if args.randomboard:
-			size = args.randomboard
+		if args.randompuzzle:
+			size = args.randompuzzle
 			return (generate_solvable(size), size, args)
 		elif args.name:
 			return parsefile(args.name, args)
