@@ -68,6 +68,10 @@ def stdin_to_line():
 		raise PuzzleProblem("Format error: Problem with input file lines.")
 	except UnicodeDecodeError:
 		raise PuzzleProblem("Format error: File type is not valid")
+	except ValueError:
+		raise PuzzleProblem("Format error: Problematic numeric value.")
+	except TypeError:
+		raise PuzzleProblem("Format error: Non-numeric input where integer expected.")
 
 def parsefile(name, options={}):
 	f = secured_open(name)
