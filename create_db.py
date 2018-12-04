@@ -42,6 +42,3 @@ def createDb():
 	for g, name in zip(goals, ['a', 'b', 'c']):
 		db = bfs(g, size, (1,1))
 		save_json(db, size, name)
-
-if __name__ == "__main__":
-	createDb()
