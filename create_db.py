@@ -1,5 +1,3 @@
-#! /usr/bin/env python3
-# 
 import numpy as np
 import json
 from bfs import bfs
@@ -40,7 +38,6 @@ def get_goals(s):
 def createDb():
 	args = sys.argv[1:] if len(sys.argv) >= 2 else []
 	size = 3 if not args else int(args[0])
-	print(size)
 	goals = get_goals(size)
 	for g, name in zip(goals, ['a', 'b', 'c']):
 		db = bfs(g, size, (1,1))
